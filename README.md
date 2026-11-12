@@ -46,13 +46,19 @@ here — it is an organ of the system: nothing is a bug until Kane says so.
 
 - [x] Repo skeleton + Patient app + vitals
 - [x] Deterministic engine tests 7/7
-- [ ] Kane smoke test vs the live Patient — NOT verified yet: two runs from this
-  research stage both failed before any step (`agent_error.ap_no_action`,
-  0 credits consumed; `kane-cli balance` also fails with `fetch failed`),
-  which points at the TestMu agent backend being unreachable from this stage,
-  not at the app. Re-run the exact command in `kane/smoke-test.md` from the
-  main chat — it worked there on Nov 10. Do not treat the Nov 10 pass as
-  proof against today's build; the run must go green against this code.
+- [ ] Kane smoke test vs the live Patient — NOT verified yet: two runs from an
+  earlier research stage both failed before any step
+  (`agent_error.ap_no_action`, 0 credits consumed; `kane-cli balance` also
+  fails with `fetch failed`). Re-checked 2026-11-12 ~08:50 WITA: `npm test`
+  re-run 7/7 PASS, server live-checked (200, heading + vitals OK, no faults),
+  and `kane-cli balance` still fails with `fetch failed` — the runtime
+  reports egress is denied during background preparation, so this is a
+  stage restriction, not a TestMu outage and not an app bug. Re-run the exact
+  command in `kane/smoke-test.md` from the main chat — it worked there on
+  Nov 10. Do not treat the Nov 10 pass as proof against today's build; the
+  run must go green against this code.
+- [x] Local git repo initialized 2026-11-12 (commit b821217) — remote GitHub
+  repo not yet created; push after the Kane run goes green.
 - [ ] M1 attack catalog + fault injection toggles (Nov 14)
 - [ ] M2 patch loop (Nov 15)
 - [ ] Dashboard polish + drill rehearsal (Nov 16)
