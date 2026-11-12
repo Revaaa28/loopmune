@@ -7,6 +7,7 @@ Run after `npm start` (Patient on http://localhost:3000, healthy baseline, no fa
 ```bash
 export KANE_CLI_CHROME_PATH=/home/hatch/.cache/ms-playwright/chromium-1254/chrome-linux64/chrome
 export NO_PROXY=localhost,127.0.0.1
+export no_proxy=localhost,127.0.0.1
 kane-cli run --agent --headless --url http://localhost:3000 \
   "Open the LoopMune store. Verify the heading 'LoopMune Store' is visible and at least 6 products are listed. Click 'Add to cart' on the first product. Verify the cart total updates to that product's price and the cart count shows 1. Click the 'Open the immune log' link and verify the page heading 'Immune Log' is visible."
 ```

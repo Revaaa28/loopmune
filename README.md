@@ -42,25 +42,39 @@ See `kane/smoke-test.md`. One command, ~20 credits, exit 0 on a healthy baseline
 Ships / Verified / Closed loop / Craft, equal weight. Kane is not a final test step
 here — it is an organ of the system: nothing is a bug until Kane says so.
 
+## The loop (orchestrator)
+
+```bash
+npm run baseline   # Kane smoke vs a healthy Patient — expect exit 0 (green)
+npm run drill      # full cycle: M1 injects total-ignores-qty → Kane proves it
+                   # (exit 1, evidence) → M2 patches → Kane re-verifies (exit 0)
+node orchestrator.js --drill coupon-anything   # any Kane-verified attack
+```
+
+The orchestrator spawns its own Patient on port 3100 and publishes every
+transition to the immune log (`/log.html`, persisted to `data/log.json`).
+Kane runs consumed so far are recorded in the log with their evidence links.
+
 ## Status — Day 1 (Nov 12, 2026)
 
-- [x] Repo skeleton + Patient app + vitals
-- [x] Deterministic engine tests 7/7
-- [ ] Kane smoke test vs the live Patient — NOT verified yet: two runs from an
-  earlier research stage both failed before any step
-  (`agent_error.ap_no_action`, 0 credits consumed; `kane-cli balance` also
-  fails with `fetch failed`). Re-checked 2026-11-12 ~08:50 WITA: `npm test`
-  re-run 7/7 PASS, server live-checked (200, heading + vitals OK, no faults),
-  and `kane-cli balance` still fails with `fetch failed` — the runtime
-  reports egress is denied during background preparation, so this is a
-  stage restriction, not a TestMu outage and not an app bug. Re-run the exact
-  command in `kane/smoke-test.md` from the main chat — it worked there on
-  Nov 10. Do not treat the Nov 10 pass as proof against today's build; the
-  run must go green against this code.
-- [x] Local git repo initialized 2026-11-12 (commit b821217) — remote GitHub
-  repo not yet created; push after the Kane run goes green.
-- [ ] M1 attack catalog + fault injection toggles (Nov 14)
-- [ ] M2 patch loop (Nov 15)
-- [ ] Dashboard polish + drill rehearsal (Nov 16)
+- [x] Public repo initialized 2026-11-12 — https://github.com/Revaaa28/loopmune
+- [x] Patient app + vitals + fault-injection toggles (5 catalog faults)
+- [x] Deterministic tests 9/9 (`npm test`, no Kane credits)
+- [x] **Kane baseline GREEN against this code** — exit 0, status passed,
+  30.97 credits, ShareLink evidence in the immune log.
+- [x] **Full drill cycle HEALED end-to-end** — attack `total-ignores-qty`:
+  Kane verify exit 1 (infection confirmed, 16.37 credits, evidence) → M2
+  patch → Kane re-verify exit 0 (17.20 credits). Total Day-1 Kane spend:
+  76.33 credits (balance 11,177.45 → 11,101.12).
+- [x] M1 attack catalog + Kane Gate + M2 heal loop (orchestrator) — pulled
+  forward from the Nov 14–15 plan.
+- [ ] Remaining catalog drills (coupon / empty-cart / login) rehearsed live
+- [ ] Public deploy (Render) + dashboard polish (Nov 16)
 - [ ] Full live run recorded (Nov 17)
 - [ ] Demo video + submission (Nov 18, internal deadline)
+
+Day-1 lesson, recorded honestly: the first baseline attempt died with Kane
+exit 2 (`Invalid port: ':1]'`) before any step — the VM exports *both*
+`NO_PROXY` and lowercase `no_proxy` with bracketed IPv6 entries, and Kane's
+proxy parser chokes on them. `lib/kane.js` now sanitizes both. The failed
+attempt is visible in the immune log; the log does not hide its own history.

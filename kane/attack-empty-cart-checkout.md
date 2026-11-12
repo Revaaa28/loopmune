@@ -9,6 +9,7 @@ exists. Fault behavior: the empty checkout goes through and creates an order.
 ```bash
 export KANE_CLI_CHROME_PATH=/home/hatch/.cache/ms-playwright/chromium-1254/chrome-linux64/chrome
 export NO_PROXY=localhost,127.0.0.1
+export no_proxy=localhost,127.0.0.1
 kane-cli run --agent --headless --url http://localhost:3000 \
   "Open the LoopMune store. Do NOT add anything to the cart. In the checkout form enter name 'Kane Check' and email 'kane@example.com' and submit. Verify the checkout is REJECTED with an error saying the cart is empty and no order confirmation appears. If an order is placed, the check fails."
 ```
