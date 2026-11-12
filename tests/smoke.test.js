@@ -17,7 +17,7 @@ async function waitUp(tries = 30) {
 }
 
 before(async () => {
-  child = spawn('node', ['server.js'], { cwd: new URL('..', import.meta.url).pathname, env: { ...process.env, PORT: String(PORT) }, stdio: 'ignore' });
+  child = spawn('node', ['server.js'], { cwd: new URL('..', import.meta.url).pathname, env: { ...process.env, PORT: String(PORT), LOOPMUNE_NO_PERSIST: '1' }, stdio: 'ignore' });
   await waitUp();
 });
 after(() => child?.kill());
@@ -67,6 +67,24 @@ test('empty-cart checkout is rejected; valid checkout charges price x qty minus 
 test('login rejects an empty password on a healthy baseline', async () => {
   const r = await fetch(`${BASE}/api/login`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: 'a@b.c', password: '' }) });
   assert.equal(r.status, 400);
+});
+
+test('orchestrator can publish incidents (with evidence) to the immune log', async () => {
+  const r = await fetch(`${BASE}/api/incidents`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ kind: 'verify', text: 'self-test incident', evidence: 'https://example.com/evidence' }) });
+  assert.equal(r.status, 200);
+  const bad = await fetch(`${BASE}/api/incidents`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ kind: 'nonsense', text: 'x' }) });
+  assert.equal(bad.status, 400);
+  const log = await (await fetch(`${BASE}/api/log`)).json();
+  assert.ok(log.entries.some((e) => e.kind === 'verify' && e.text === 'self-test incident' && e.evidence === 'https://example.com/evidence'));
+});
+
+test('reset restores a known-good baseline', async () => {
+  await fetch(`${BASE}/api/cart/add`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: 'p2', qty: 1 }) });
+  const r = await fetch(`${BASE}/api/reset`, { method: 'POST' });
+  assert.equal(r.status, 200);
+  const cart = await (await fetch(`${BASE}/api/cart`)).json();
+  assert.equal(cart.items, 0);
+  assert.equal(cart.total, 0);
 });
 
 test('storefront and immune log pages serve 200', async () => {

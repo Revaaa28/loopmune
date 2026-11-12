@@ -13,6 +13,7 @@
 // the client. Every request/error is counted in /api/vitals.
 import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { extname, join, normalize } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -44,13 +45,33 @@ let requestCount = 0;
 let errorCount = 0;
 let cart = {}; // productId -> qty
 let orders = [];
-const immuneLog = [
-  { ts: new Date().toISOString(), kind: 'system', text: 'Patient started — baseline healthy. No faults injected.' },
-];
+// Immune log: in-memory, persisted to data/log.json so a full attack → proof →
+// heal → proof cycle stays visible across restarts (ShareLinks expire in 7 days;
+// this log is the durable record). Set LOOPMUNE_NO_PERSIST=1 to disable (tests).
+const dataDir = join(fileURLToPath(new URL('.', import.meta.url)), 'data');
+const LOG_FILE = join(dataDir, 'log.json');
+let immuneLog = [];
+try {
+  if (existsSync(LOG_FILE)) immuneLog = JSON.parse(readFileSync(LOG_FILE, 'utf8'));
+} catch { immuneLog = []; }
+if (!Array.isArray(immuneLog) || immuneLog.length === 0) {
+  immuneLog = [
+    { ts: new Date().toISOString(), kind: 'system', text: 'Patient started — baseline healthy. No faults injected.' },
+  ];
+}
 
-function log(kind, text) {
-  immuneLog.unshift({ ts: new Date().toISOString(), kind, text });
+function persistLog() {
+  if (process.env.LOOPMUNE_NO_PERSIST) return;
+  try {
+    mkdirSync(dataDir, { recursive: true });
+    writeFileSync(LOG_FILE, JSON.stringify(immuneLog, null, 2));
+  } catch { /* best-effort: the in-memory log stays authoritative */ }
+}
+
+function log(kind, text, evidence) {
+  immuneLog.unshift({ ts: new Date().toISOString(), kind, text, ...(evidence ? { evidence } : {}) });
   if (immuneLog.length > 200) immuneLog.length = 200;
+  persistLog();
 }
 
 function cartTotal() {
@@ -162,6 +183,20 @@ const server = createServer(async (req, res) => {
     }
     if (path === '/api/log' && req.method === 'GET') {
       return sendJson(res, 200, { entries: immuneLog, orders: orders.slice(-10) });
+    }
+    if (path === '/api/incidents' && req.method === 'POST') {
+      // The orchestrator (M1/Kane Gate/M2) publishes every state transition here.
+      const { kind, text, evidence } = await readBody(req);
+      const KINDS = ['attack', 'verify', 'infected', 'repelled', 'patch', 'healed', 'chronic', 'system'];
+      if (!KINDS.includes(kind) || !text) { errorCount++; return sendJson(res, 400, { error: 'a known kind and text are required' }); }
+      log(kind, String(text), evidence ? String(evidence) : undefined);
+      return sendJson(res, 200, { ok: true });
+    }
+    if (path === '/api/reset' && req.method === 'POST') {
+      // Test support: restore a known-good baseline (cart + orders cleared).
+      cart = {};
+      orders = [];
+      return sendJson(res, 200, { ok: true });
     }
     if (path === '/api/faults' && req.method === 'POST') {
       const { fault, on } = await readBody(req);
