@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LoopMune — Immune Log</title>
+<style>
+  :root { --navy:#0b1226; --cyan:#22d3ee; --teal:#2dd4bf; --violet:#8b5cf6; --ink:#e5e7eb; --muted:#94a3b8; --card:#111a33; --line:#1e2a4a; }
+  body { margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif; background:var(--navy); color:var(--ink); }
+  header { padding:16px 20px; border-bottom:1px solid var(--line); }
+  header a { color:var(--cyan); text-decoration:none; }
+  main { max-width:900px; margin:0 auto; padding:20px; }
+  .stats { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:16px; }
+  .stat { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:12px 16px; }
+  .stat b { font-size:22px; display:block; }
+  .stat span { color:var(--muted); font-size:13px; }
+  .entry { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:12px 14px; margin-bottom:10px; font-size:14px; }
+  .entry .ts { color:var(--muted); font-size:12px; }
+  .entry .kind { display:inline-block; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.5px; padding:2px 8px; border-radius:20px; background:#0d1530; border:1px solid var(--line); margin-right:8px; }
+</style>
+</head>
+<body>
+<header><a href="/">← Back to the store</a></header>
+<main>
+  <h1 style="margin:0 0 4px">Immune Log</h1>
+  <p style="color:var(--muted);margin:0 0 18px">Every attack, Kane verdict, patch and re-verification — published live. Kane CLI is the only accepted proof that a break is real.</p>
+  <div class="stats" id="stats"></div>
+  <div id="entries"><p style="color:var(--muted)">Loading…</p></div>
+</main>
+<script>
+async function load() {
+  const v = await (await fetch('/api/vitals')).json();
+  const log = await (await fetch('/api/log')).json();
+  const kinds = {};
+  log.entries.forEach((e) => kinds[e.kind] = (kinds[e.kind] || 0) + 1);
+  document.getElementById('stats').innerHTML =
+    `<div class="stat"><b>${v.uptimeSec}s</b><span>uptime</span></div>` +
+    `<div class="stat"><b>${v.requests}</b><span>requests</span></div>` +
+    `<div class="stat"><b>${v.errors}</b><span>errors</span></div>` +
+    `<div class="stat"><b>${kinds.infected || 0}</b><span>infections confirmed</span></div>` +
+    `<div class="stat"><b>${kinds.healed || 0}</b><span>healed</span></div>` +
+    `<div class="stat"><b>${kinds.repelled || 0}</b><span>attacks repelled</span></div>`;
+  document.getElementById('entries').innerHTML = log.entries.map((e) =>
+    `<div class="entry"><span class="kind">${e.kind}</span>${e.text}<div class="ts">${new Date(e.ts).toLocaleString()}</div></div>`).join('') || '<p style="color:var(--muted)">No incidents yet.</p>';
+}
+load(); setInterval(load, 5000);
+</script>
+</body>
+</html>
