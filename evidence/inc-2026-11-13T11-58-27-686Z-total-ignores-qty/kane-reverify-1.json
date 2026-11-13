@@ -1,0 +1,79 @@
+{
+  "phase": "reverify-1",
+  "at": "2026-11-13T12:00:56.933Z",
+  "exitCode": 0,
+  "status": "passed",
+  "passed": true,
+  "testUrl": "https://test-manager.lambdatest.com/projects/01M730R4QV2KQWHS1GAKND4KMY/test-cases/01M7ACEMDE8ZBMBJD14NCVJ88B/dashboard/share/US_B8JJ8JKHM0T16T15KXTSP8A0WHAY9H29M477CE5CCR77QRMZRV8L8M2AVMS45F1U?type=summary&agentView=true&fqdn=summary-page",
+  "credits": 14.488327499999997,
+  "runEnd": {
+    "type": "run_end",
+    "status": "passed",
+    "summary": "Opened the LoopMune store.\nAdded the first product, Antibody Tee — Navy, to the cart twice as requested.\nThe cart total was Rp378,000, confirming two items were added at Rp189,000 each.",
+    "one_liner": "added two Antibody Tee — Navy shirts to the cart on the LoopMune store",
+    "final_state": {
+      "url": "http://localhost:3100/",
+      "cart_total": "Rp378,000"
+    },
+    "reason": "Objective completed",
+    "duration": 39.8,
+    "bifurcated": false,
+    "total_runs": 1,
+    "context": {
+      "memory": {
+        "cart_total_check": {
+          "extracted_value": "Rp378,000",
+          "operator": "equals",
+          "transforms": [
+            "strip"
+          ],
+          "json_path": null,
+          "reasoning": "value: 'Rp378,000' -> 'Rp378,000' after ['strip']; equals 'Rp378,000' -> PASS",
+          "analyzer_type": "textual_visual",
+          "step": 4,
+          "query": "the cart total amount in the Cart region",
+          "condition": "the cart total reads Rp378,000 — exactly twice the unit price.",
+          "human_description": "Reading the cart total from the Cart region",
+          "expected_value": "Rp378,000",
+          "code_js": "(el(65).textContent.match(/Rp[\\d,]+/) || [null])[0]",
+          "wrapped_js": "(els) => {\n  const __m = {65: 0};\n  const el = (i) => els[__m[i]];\n  const __v = ((el(65).textContent.match(/Rp[\\d,]+/) || [null])[0]);\n  return (typeof __v === 'boolean' ? String(__v) : __v);\n}",
+          "locators": [
+            "internal:text=\"Cart total: Rp378,000\"i"
+          ],
+          "needs_unit_conversion": false
+        }
+      },
+      "variables": {
+        "cart_total_check": {
+          "syntax": "{{cart_total_check}}",
+          "value": "Rp378,000",
+          "type": "memory",
+          "secret": false
+        }
+      },
+      "pointer": "(passed) added two Antibody Tee — Navy shirts to the cart on the LoopMune store"
+    },
+    "credits_consumed": 14.488327499999997,
+    "session_dir": "/home/hatch/.testmuai/kaneai/sessions/870a29f2-e070-4e3a-a2eb-1e6bc9da3bab",
+    "run_dir": "/home/hatch/.testmuai/kaneai/sessions/870a29f2-e070-4e3a-a2eb-1e6bc9da3bab/runs/0",
+    "result_code": 100,
+    "reason_code": "success.complete",
+    "per_flow_metadata": [
+      {
+        "result_code": "100",
+        "reason_code": "success.complete",
+        "error_message": null,
+        "summary": "Opened the LoopMune store.\nAdded the first product, Antibody Tee — Navy, to the cart twice as requested.\nThe cart total was Rp378,000, confirming two items were added at Rp189,000 each.",
+        "one_liner": "added two Antibody Tee — Navy shirts to the cart on the LoopMune store",
+        "credits_consumed": 14.488327499999997
+      }
+    ],
+    "run_id": "run-0",
+    "test_url": "https://test-manager.lambdatest.com/projects/01M730R4QV2KQWHS1GAKND4KMY/test-cases/01M7ACEMDE8ZBMBJD14NCVJ88B/dashboard/share/US_B8JJ8JKHM0T16T15KXTSP8A0WHAY9H29M477CE5CCR77QRMZRV8L8M2AVMS45F1U?type=summary&agentView=true&fqdn=summary-page",
+    "coverage": {
+      "status": "skipped"
+    },
+    "v": 1,
+    "ts": "2026-11-13T12:00:55.194Z"
+  }
+}

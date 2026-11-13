@@ -1,0 +1,76 @@
+{
+  "phase": "verify",
+  "at": "2026-11-13T11:59:44.457Z",
+  "exitCode": 1,
+  "status": "failed",
+  "passed": false,
+  "testUrl": "https://test-manager.lambdatest.com/projects/01M730R4QV2KQWHS1GAKND4KMY/test-cases/01M7ACC5241ZG2Z6GZYNYQKFP1/dashboard/share/US_O1HC5I6W2PRXVI3JFJ25ULRWL0JVM8NTLKRXRDWZ0TAYJCD4ADH7FOLDUFZZ6ZK3?type=summary&agentView=true&fqdn=summary-page",
+  "credits": 18.755230000000005,
+  "runEnd": {
+    "type": "run_end",
+    "status": "failed",
+    "summary": "After the second tee was added, the cart quantity increased to two but the displayed total did not multiply the Rp189,000 unit price by that quantity.\nFix the cart-total calculation so every line item's unit price is multiplied by its quantity, then add a regression check for adding the same product twice.\nevidence: objective_contradiction: Two tees are in the cart, but its displayed total remains Rp189,000 rather than Rp378,000.",
+    "one_liner": "The cart correctly shows two Navy tees, but charges only for one.",
+    "final_state": {},
+    "reason": "Two tees are in the cart, but its displayed total remains Rp189,000 rather than Rp378,000.",
+    "duration": 47.1,
+    "bifurcated": false,
+    "total_runs": 1,
+    "context": {
+      "memory": {},
+      "variables": {},
+      "pointer": "(failed) The cart correctly shows two Navy tees, but charges only for one."
+    },
+    "credits_consumed": 18.755230000000005,
+    "session_dir": "/home/hatch/.testmuai/kaneai/sessions/12a1ec5f-f1b3-4161-85bd-2bd3eb343157",
+    "run_dir": "/home/hatch/.testmuai/kaneai/sessions/12a1ec5f-f1b3-4161-85bd-2bd3eb343157/runs/0",
+    "result_code": 740,
+    "reason_code": "assertion_error.confirmed_product_bug",
+    "per_flow_metadata": [
+      {
+        "result_code": "740",
+        "reason_code": "assertion_error.confirmed_product_bug",
+        "error_message": "Two tees are in the cart, but its displayed total remains Rp189,000 rather than Rp378,000.",
+        "summary": "After the second tee was added, the cart quantity increased to two but the displayed total did not multiply the Rp189,000 unit price by that quantity.\nFix the cart-total calculation so every line item's unit price is multiplied by its quantity, then add a regression check for adding the same product twice.\nevidence: objective_contradiction: Two tees are in the cart, but its displayed total remains Rp189,000 rather than Rp378,000.",
+        "one_liner": "The cart correctly shows two Navy tees, but charges only for one.",
+        "credits_consumed": 18.755230000000005
+      }
+    ],
+    "run_id": "run-0",
+    "verdict": {
+      "confirmed": true,
+      "status": "failed",
+      "family": "application_issue",
+      "category": "ui_data_defect",
+      "category_proposal": "",
+      "severity": "major",
+      "root_cause": "After the second tee was added, the cart quantity increased to two but the displayed total did not multiply the Rp189,000 unit price by that quantity.",
+      "agent_fault_assessment": "The agent followed the requested flow: it clicked the Add to cart control for the specified product twice, and both POST /api/cart/add requests succeeded with HTTP 200. The resulting cart shows quantity two, so this was not a wrong target, premature action, or test-data problem. The application failed to update the displayed total to match its own cart quantity and unit price.",
+      "bug_title": "Cart total ignores item quantity for Antibody Tee — Navy",
+      "signals": [
+        {
+          "step": "0-4",
+          "kind": "objective_contradiction",
+          "excerpt": "Two tees are in the cart, but its displayed total remains Rp189,000 rather than Rp378,000."
+        }
+      ],
+      "confidence": 0.99,
+      "suggestion": "Fix the cart-total calculation so every line item's unit price is multiplied by its quantity, then add a regression check for adding the same product twice.",
+      "one_liner": "The cart correctly shows two Navy tees, but charges only for one.",
+      "relevant_steps": [
+        2,
+        3,
+        4
+      ],
+      "culprit_step": "0-3",
+      "credits_consumed": 3.8444499999999997,
+      "mode": "terminal"
+    },
+    "test_url": "https://test-manager.lambdatest.com/projects/01M730R4QV2KQWHS1GAKND4KMY/test-cases/01M7ACC5241ZG2Z6GZYNYQKFP1/dashboard/share/US_O1HC5I6W2PRXVI3JFJ25ULRWL0JVM8NTLKRXRDWZ0TAYJCD4ADH7FOLDUFZZ6ZK3?type=summary&agentView=true&fqdn=summary-page",
+    "coverage": {
+      "status": "skipped"
+    },
+    "v": 1,
+    "ts": "2026-11-13T11:59:42.831Z"
+  }
+}
