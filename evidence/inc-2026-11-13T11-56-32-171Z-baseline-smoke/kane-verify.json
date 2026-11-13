@@ -1,0 +1,216 @@
+{
+  "phase": "verify",
+  "at": "2026-11-13T11:58:23.079Z",
+  "exitCode": 0,
+  "status": "passed",
+  "passed": true,
+  "testUrl": "https://test-manager.lambdatest.com/projects/01M730R4QV2KQWHS1GAKND4KMY/test-cases/01M7AC8NMV8W1DXS1VAF3AS61X/dashboard/share/US_WD4E5F42O3TKXK18DV3MOXPFDEE8H1U0EW4H0CKHKNF3WS799Q1TAOXUE323QS1Z?type=summary&agentView=true&fqdn=summary-page",
+  "credits": 35.3160825,
+  "runEnd": {
+    "type": "run_end",
+    "status": "passed",
+    "summary": "Opened the LoopMune store, where the LoopMune Store heading and six products were available.\nRecorded the first product’s price as Rp189,000.\nAdded the first product to the cart; the cart showed 1 item with a total of Rp189,000.\nOpened the Immune Log page, where the Immune Log heading was visible.",
+    "one_liner": "opened the Immune Log on the LoopMune store",
+    "final_state": {
+      "url": "http://localhost:3100/log.html",
+      "first_product_price": "Rp189,000",
+      "cart_count": "1",
+      "cart_total": "Rp189,000",
+      "page_heading": "Immune Log"
+    },
+    "reason": "Objective completed",
+    "duration": 77.4,
+    "bifurcated": false,
+    "total_runs": 1,
+    "context": {
+      "memory": {
+        "loopmune_store_heading_visible": {
+          "extracted_value": "true",
+          "operator": "equals",
+          "transforms": [],
+          "json_path": null,
+          "reasoning": "value: 'true' -> 'true'; equals 'true' -> PASS",
+          "analyzer_type": "textual_visual",
+          "step": 3,
+          "query": "whether the heading 'LoopMune Store' is present (at the top of the store page)",
+          "condition": "the heading 'LoopMune Store' is visible.",
+          "human_description": "Checking whether the LoopMune Store heading is present",
+          "expected_value": "true",
+          "subject": "the heading 'LoopMune Store'",
+          "must_be": "present",
+          "code_js": "el(12).textContent.trim() === 'LoopMune Store'",
+          "wrapped_js": "(els) => {\n  const __m = {12: 0};\n  const el = (i) => els[__m[i]];\n  const __v = (el(12).textContent.trim() === 'LoopMune Store');\n  return (typeof __v === 'boolean' ? String(__v) : __v);\n}",
+          "locators": [
+            "internal:role=heading[name=\"LoopMune Store\"i]"
+          ],
+          "needs_unit_conversion": false
+        },
+        "products_listed_count": {
+          "extracted_value": "6",
+          "operator": "gte",
+          "transforms": [],
+          "json_path": null,
+          "reasoning": "value: '6' -> '6'; gte '6' -> PASS",
+          "analyzer_type": "textual_visual",
+          "step": 3,
+          "query": "the number of products listed in the store product grid",
+          "condition": "at least 6 products are listed.",
+          "human_description": "Counting products in the store listing",
+          "expected_value": "6",
+          "code_js": "el(25).querySelectorAll('article').length",
+          "wrapped_js": "(els) => {\n  const __m = {25: 0};\n  const el = (i) => els[__m[i]];\n  const __v = (el(25).querySelectorAll('article').length);\n  return (typeof __v === 'boolean' ? String(__v) : __v);\n}",
+          "locators": [
+            "internal:text=\"Antibody Tee — Navy Rp189,000 In stock: 12 Add to cart Macrophage Mug Rp99,000\"i"
+          ],
+          "needs_unit_conversion": false
+        },
+        "first_product_price": {
+          "extracted_value": "Rp189,000",
+          "operator": "equals",
+          "transforms": [
+            "strip"
+          ],
+          "json_path": null,
+          "reasoning": "value: 'Rp189,000' (stored, no comparison)",
+          "analyzer_type": "textual_visual",
+          "step": 3,
+          "query": "the price of the first product in the store listing",
+          "condition": "the first product's price is saved as {{first_product_price}}.",
+          "human_description": "Reading the first product price",
+          "expected_value": "",
+          "code_js": "el(28).textContent.trim()",
+          "wrapped_js": "(els) => {\n  const __m = {28: 0};\n  const el = (i) => els[__m[i]];\n  const __v = (el(28).textContent.trim());\n  return (typeof __v === 'boolean' ? String(__v) : __v);\n}",
+          "locators": [
+            "internal:text=\"Rp189,000\"i"
+          ],
+          "needs_unit_conversion": false
+        },
+        "cart_count": {
+          "extracted_value": "1",
+          "operator": "equals",
+          "transforms": [
+            "strip"
+          ],
+          "json_path": null,
+          "reasoning": "value: '1' -> '1' after ['strip']; equals '1' -> PASS",
+          "analyzer_type": "textual_visual",
+          "step": 6,
+          "query": "the cart item count in the cart summary",
+          "condition": "the cart count shows 1.",
+          "human_description": "Reading the cart item count from the cart summary",
+          "expected_value": "1",
+          "code_js": "el(64).textContent.match(/Cart count:\\s*(\\d+)/)?.[1] ?? null",
+          "wrapped_js": "(els) => {\n  const __m = {64: 0};\n  const el = (i) => els[__m[i]];\n  const __v = (el(64).textContent.match(/Cart count:\\s*(\\d+)/)?.[1] ?? null);\n  return (typeof __v === 'boolean' ? String(__v) : __v);\n}",
+          "locators": [
+            "internal:text=\"Cart count:\"i"
+          ],
+          "needs_unit_conversion": false
+        },
+        "cart_total": {
+          "extracted_value": "Rp189,000",
+          "operator": "equals",
+          "transforms": [
+            "strip"
+          ],
+          "json_path": null,
+          "reasoning": "value: 'Rp189,000' -> 'Rp189,000' after ['strip']; equals 'Rp189,000' -> PASS",
+          "analyzer_type": "textual_visual",
+          "step": 6,
+          "query": "the cart total amount in the cart summary",
+          "condition": "the cart total equals Rp189,000.",
+          "human_description": "Reading the cart total from the cart summary",
+          "expected_value": "{{first_product_price}}",
+          "code_js": "el(65).textContent.match(/Cart total:\\s*(Rp[\\d,]+)/)?.[1] ?? null",
+          "wrapped_js": "(els) => {\n  const __m = {65: 0};\n  const el = (i) => els[__m[i]];\n  const __v = (el(65).textContent.match(/Cart total:\\s*(Rp[\\d,]+)/)?.[1] ?? null);\n  return (typeof __v === 'boolean' ? String(__v) : __v);\n}",
+          "locators": [
+            "internal:text=\"Cart total: Rp189,000\"i"
+          ],
+          "needs_unit_conversion": false
+        },
+        "immune_log_heading_visible": {
+          "extracted_value": "true",
+          "operator": "equals",
+          "transforms": [],
+          "json_path": null,
+          "reasoning": "value: 'true' -> 'true'; equals 'true' -> PASS",
+          "analyzer_type": "textual_visual",
+          "step": 10,
+          "query": "whether the page heading 'Immune Log' is present (at the top of the main page content)",
+          "condition": "the page heading 'Immune Log' is visible.",
+          "human_description": "Checking whether the Immune Log page heading is present",
+          "expected_value": "true",
+          "subject": "the page heading 'Immune Log'",
+          "must_be": "present",
+          "code_js": "el(6).textContent.trim() === 'Immune Log' && !!(el(6).offsetWidth || el(6).offsetHeight || el(6).getClientRects().length)",
+          "wrapped_js": "(els) => {\n  const __m = {6: 0};\n  const el = (i) => els[__m[i]];\n  const __v = (el(6).textContent.trim() === 'Immune Log' && !!(el(6).offsetWidth || el(6).offsetHeight || el(6).getClientRects().length));\n  return (typeof __v === 'boolean' ? String(__v) : __v);\n}",
+          "locators": [
+            "internal:role=heading[name=\"Immune Log\"i]"
+          ],
+          "needs_unit_conversion": false
+        }
+      },
+      "variables": {
+        "first_product_price": {
+          "syntax": "{{first_product_price}}",
+          "value": "Rp189,000",
+          "type": "memory",
+          "secret": false,
+          "source": "runtime"
+        },
+        "loopmune_store_heading_visible": {
+          "syntax": "{{loopmune_store_heading_visible}}",
+          "value": "true",
+          "type": "memory",
+          "secret": false
+        },
+        "products_listed_count": {
+          "syntax": "{{products_listed_count}}",
+          "value": "6",
+          "type": "memory",
+          "secret": false
+        },
+        "cart_count": {
+          "syntax": "{{cart_count}}",
+          "value": "1",
+          "type": "memory",
+          "secret": false
+        },
+        "cart_total": {
+          "syntax": "{{cart_total}}",
+          "value": "Rp189,000",
+          "type": "memory",
+          "secret": false
+        },
+        "immune_log_heading_visible": {
+          "syntax": "{{immune_log_heading_visible}}",
+          "value": "true",
+          "type": "memory",
+          "secret": false
+        }
+      },
+      "pointer": "(passed) opened the Immune Log on the LoopMune store"
+    },
+    "credits_consumed": 35.3160825,
+    "session_dir": "/home/hatch/.testmuai/kaneai/sessions/663994c5-b75f-4200-95c4-ff74df4ca117",
+    "run_dir": "/home/hatch/.testmuai/kaneai/sessions/663994c5-b75f-4200-95c4-ff74df4ca117/runs/0",
+    "result_code": 100,
+    "reason_code": "success.complete",
+    "per_flow_metadata": [
+      {
+        "result_code": "100",
+        "reason_code": "success.complete",
+        "error_message": null,
+        "summary": "Opened the LoopMune store, where the LoopMune Store heading and six products were available.\nRecorded the first product’s price as Rp189,000.\nAdded the first product to the cart; the cart showed 1 item with a total of Rp189,000.\nOpened the Immune Log page, where the Immune Log heading was visible.",
+        "one_liner": "opened the Immune Log on the LoopMune store",
+        "credits_consumed": 35.3160825
+      }
+    ],
+    "run_id": "run-0",
+    "test_url": "https://test-manager.lambdatest.com/projects/01M730R4QV2KQWHS1GAKND4KMY/test-cases/01M7AC8NMV8W1DXS1VAF3AS61X/dashboard/share/US_WD4E5F42O3TKXK18DV3MOXPFDEE8H1U0EW4H0CKHKNF3WS799Q1TAOXUE323QS1Z?type=summary&agentView=true&fqdn=summary-page",
+    "coverage": {
+      "status": "skipped"
+    },
+    "v": 1,
+    "ts": "2026-11-13T11:58:22.051Z"
+  }
+}
