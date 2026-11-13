@@ -1,0 +1,163 @@
+/* LoopMune — storefront skin.
+   The shop and the Patient Monitor share ONE token system (direction C:
+   phosphor-on-black, same panels, lines, ink and mono), so the two pages
+   read as one product. The store borrows the monitor's tokens, not its
+   drama: no trace, no giant state word — a friendly shop with clear
+   prices and clear actions. Layout primitives live in base.css; this
+   file is the theme + store-only components. */
+
+.lm-page-store {
+  --bg: #04070a; --panel: #070d11; --panel-2: #0a1218; --line: #16242c; --line-soft: #0e1a20;
+  --line-bright: #223946;
+  --ink: #cfe0da; --ink-2: #7e938c; --ink-3: #4c6059;
+  --trace: #3ddc97; --trace-glow: rgba(61, 220, 151, .35);
+  --red: #ff5347; --amber: #ffb224; --cyan: #57c7d4;
+  --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  background: var(--bg);
+  color: var(--ink);
+}
+.lm-page-store a { color: var(--cyan); }
+.lm-page-store a:focus-visible,
+.lm-page-store button:focus-visible,
+.lm-page-store input:focus-visible,
+.lm-page-store select:focus-visible { outline: 2px solid var(--trace); outline-offset: 2px; }
+
+/* ── brand bar ─────────────────────────────────────────── */
+.lm-page-store .lm-header {
+  max-width: 1180px; margin: 0 auto; padding: 16px 24px;
+  border-bottom: 1px solid var(--line);
+}
+.lm-page-store .lm-logo {
+  border: 1px solid var(--line); border-radius: 8px; background: var(--panel);
+}
+.lm-page-store .lm-wordmark { font-family: var(--mono); letter-spacing: .14em; font-size: 17px; }
+.lm-nav-log {
+  display: inline-block; text-decoration: none; font-weight: 650; font-size: 14px;
+  border: 1px solid var(--line-bright); border-radius: 999px; background: var(--panel-2);
+  padding: 8px 16px;
+}
+.lm-nav-log:hover { border-color: var(--trace); box-shadow: 0 0 10px var(--trace-glow); }
+
+/* ── vitals strip (same cells as the monitor) ──────────── */
+.lm-page-store .lm-vitals { display: block; max-width: 1180px; margin: 0 auto; padding: 24px 24px 0; }
+.lm-vitals-grid {
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px;
+  background: var(--line); border: 1px solid var(--line); border-radius: 10px; overflow: hidden;
+}
+.lm-page-store .lm-vital { background: var(--panel); padding: 12px 16px; display: flex; flex-direction: column; gap: 4px; }
+.lm-vital-label { font-family: var(--mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-2); }
+.lm-vital-value { font-family: var(--mono); font-size: 20px; font-weight: 700; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.lm-vital-status-value { color: var(--trace); }
+@media (max-width: 640px) {
+  .lm-page-store .lm-vitals { padding: 16px 16px 0; }
+  .lm-vitals-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* ── page frame ────────────────────────────────────────── */
+.lm-page-store .lm-main { max-width: 1180px; padding: 24px; gap: 32px; }
+@media (max-width: 820px) {
+  .lm-page-store .lm-main { padding: 16px; gap: 24px; }
+  .lm-page-store .lm-header { padding: 12px 16px; }
+}
+
+/* ── store heading ─────────────────────────────────────── */
+.lm-store-eyebrow {
+  font-family: var(--mono); font-size: 12px; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--ink-2); margin: 0 0 8px;
+}
+.lm-store-eyebrow b { color: var(--ink); }
+.lm-page-store .lm-store-heading { font-size: clamp(26px, 4vw, 34px); line-height: 1.15; margin: 0 0 8px; }
+.lm-store-intro { color: var(--ink-2); font-size: 15px; margin: 0 0 24px; max-width: 65ch; }
+
+/* ── forms (shared) ────────────────────────────────────── */
+.lm-page-store .lm-field { font-size: 13px; color: var(--ink-2); gap: 6px; margin-bottom: 12px; }
+.lm-page-store .lm-input {
+  background: var(--panel-2); border: 1px solid var(--line); border-radius: 6px;
+  color: var(--ink); font: inherit; font-size: 15px; padding: 0.55rem 0.7rem;
+}
+.lm-page-store .lm-input::placeholder { color: var(--ink-3); }
+.lm-page-store .lm-button {
+  background: var(--panel-2); border: 1px solid var(--line-bright); border-radius: 6px;
+  color: var(--ink); font: inherit; font-weight: 650; padding: 0.55rem 0.9rem;
+}
+.lm-page-store .lm-button:hover:not([disabled]) { border-color: var(--trace); }
+.lm-page-store .lm-button-primary {
+  background: var(--amber); border-color: var(--amber); color: #1a1200; font-weight: 700;
+}
+.lm-page-store .lm-button-primary:hover:not([disabled]) { border-color: var(--amber); box-shadow: 0 0 12px rgba(255, 178, 36, .35); }
+
+/* ── search / filter ───────────────────────────────────── */
+.lm-page-store .lm-filter { gap: 16px; margin-bottom: 24px; }
+.lm-page-store .lm-filter .lm-field { margin-bottom: 0; }
+
+/* ── product cards ─────────────────────────────────────── */
+.lm-page-store .lm-products { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+.lm-page-store .lm-product {
+  background: var(--panel); border: 1px solid var(--line); border-radius: 10px;
+  padding: 20px; gap: 8px;
+  transition: border-color .15s ease, transform .15s ease;
+}
+.lm-page-store .lm-product:hover { border-color: var(--line-bright); transform: translateY(-2px); }
+.lm-product-name { margin: 0; font-size: 17px; font-weight: 650; line-height: 1.3; }
+.lm-product-price {
+  margin: 0; font-family: var(--mono); font-size: 22px; font-weight: 700;
+  color: var(--trace); font-variant-numeric: tabular-nums;
+}
+.lm-product-stock {
+  margin: 0 0 8px; font-family: var(--mono); font-size: 11px; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--ink-2);
+}
+.lm-products-state { color: var(--ink-2); margin: 0 0 16px; }
+.lm-products-state:empty { margin: 0; }
+.lm-products-state button {
+  background: var(--panel-2); border: 1px solid var(--line-bright); border-radius: 6px;
+  color: var(--ink); font: inherit; font-size: 13px; padding: 0.3rem 0.7rem; cursor: pointer; margin-left: 8px;
+}
+
+/* ── side panels: cart, checkout, orders, sign-in ──────── */
+.lm-page-store .lm-panel { gap: 24px; }
+.lm-cart, .lm-checkout, .lm-orders, .lm-login {
+  background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 20px;
+}
+.lm-cart-heading, .lm-checkout-heading, .lm-orders-heading, .lm-login-heading {
+  font-family: var(--mono); font-size: 12px; font-weight: 700; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--ink-2); margin: 0 0 12px;
+}
+
+/* cart */
+.lm-cart-empty { color: var(--ink-2); font-size: 14px; margin: 0; }
+.lm-page-store .lm-cart-line { padding: 8px 0; border-top: 1px dashed var(--line); gap: 8px; }
+.lm-page-store .lm-cart-lines .lm-cart-line:first-child { border-top: none; padding-top: 0; }
+.lm-cart-line-name { font-size: 14px; }
+.lm-page-store .lm-qty { gap: 6px; }
+.lm-page-store .lm-qty button {
+  background: var(--panel-2); border: 1px solid var(--line); border-radius: 6px; color: var(--ink);
+  font-family: var(--mono); font-size: 14px; cursor: pointer;
+}
+.lm-page-store .lm-qty button:hover { border-color: var(--trace); }
+.lm-page-store .lm-qty button[data-remove] {
+  background: none; border: none; min-width: 0; min-height: 2.25rem;
+  font-family: inherit; font-size: 13px; color: var(--cyan); padding: 0 4px;
+}
+.lm-page-store .lm-qty button[data-remove]:hover { text-decoration: underline; }
+.lm-qty-value { font-family: var(--mono); font-variant-numeric: tabular-nums; min-width: 1.5em; text-align: center; }
+.lm-cart-summary { border-top: 1px solid var(--line); margin-top: 12px; padding-top: 12px; }
+.lm-cart-count, .lm-cart-total {
+  display: flex; justify-content: space-between; align-items: baseline; margin: 0 0 4px;
+}
+.lm-summary-label { font-size: 13px; color: var(--ink-2); }
+.lm-cart-count-value { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.lm-cart-total-value { font-family: var(--mono); font-size: 20px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.lm-cart-error { color: var(--red); font-size: 13.5px; margin: 8px 0 0; }
+.lm-cart-error:empty { display: none; }
+
+/* checkout + sign-in results */
+.lm-checkout-result, .lm-login-result { font-size: 14px; margin: 12px 0 0; }
+.lm-checkout-result:empty, .lm-login-result:empty { margin: 0; }
+.lm-login-note { color: var(--ink-2); font-size: 13px; margin: 0 0 12px; }
+
+/* orders */
+.lm-orders-empty { color: var(--ink-2); font-size: 14px; margin: 0; }
+.lm-order { padding: 8px 0; border-top: 1px dashed var(--line); font-size: 14px; }
+.lm-orders-list .lm-order:first-child { border-top: none; padding-top: 0; }
+.lm-order strong { font-family: var(--mono); font-weight: 700; }

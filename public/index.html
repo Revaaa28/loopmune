@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>LoopMune Store — the Patient</title>
 <link rel="stylesheet" href="/base.css">
+<link rel="stylesheet" href="/store.css">
 </head>
 <body class="lm-page lm-page-store">
 <header class="lm-header">
@@ -18,14 +19,29 @@
 </header>
 
 <section class="lm-vitals" aria-label="Patient vitals">
-  <span class="lm-vital lm-vital-status">Status: <strong class="lm-vital-status-value">…</strong></span>
-  <span class="lm-vital">Uptime: <strong class="lm-vital-uptime">…</strong></span>
-  <span class="lm-vital">Requests: <strong class="lm-vital-requests">…</strong></span>
-  <span class="lm-vital">Errors: <strong class="lm-vital-errors">…</strong></span>
+  <div class="lm-vitals-grid">
+    <div class="lm-vital">
+      <span class="lm-vital-label">Status</span>
+      <strong class="lm-vital-value lm-vital-status-value">…</strong>
+    </div>
+    <div class="lm-vital">
+      <span class="lm-vital-label">Uptime</span>
+      <strong class="lm-vital-value lm-vital-uptime">…</strong>
+    </div>
+    <div class="lm-vital">
+      <span class="lm-vital-label">Requests</span>
+      <strong class="lm-vital-value lm-vital-requests">…</strong>
+    </div>
+    <div class="lm-vital">
+      <span class="lm-vital-label">Errors</span>
+      <strong class="lm-vital-value lm-vital-errors">…</strong>
+    </div>
+  </div>
 </section>
 
 <main class="lm-main">
   <section class="lm-store">
+    <p class="lm-store-eyebrow"><b>The Patient</b> · a real little merch store</p>
     <h1 class="lm-store-heading">LoopMune Store</h1>
     <p class="lm-store-intro">Small merch store for the LoopMune project — and the Patient in its immune-system demo. Browse, fill a cart, check out. If something here breaks, Kane CLI proves it in a real browser and the healer agent patches the code; every cycle lands in the immune log.</p>
 
@@ -52,8 +68,10 @@
       <h2 class="lm-cart-heading">Cart</h2>
       <p class="lm-cart-empty" id="cart-empty">Your cart is empty. Add something from the store to get started.</p>
       <ul class="lm-cart-lines" id="cart-lines"></ul>
-      <p class="lm-cart-count">Cart count: <span class="lm-cart-count-value" id="cart-count">0</span></p>
-      <p class="lm-cart-total">Cart total: <span class="lm-cart-total-value" id="cart-total">$0.00</span></p>
+      <div class="lm-cart-summary">
+        <p class="lm-cart-count"><span class="lm-summary-label">Items in cart</span> <span class="lm-cart-count-value" id="cart-count">0</span></p>
+        <p class="lm-cart-total"><span class="lm-summary-label">Total</span> <span class="lm-cart-total-value" id="cart-total">$0.00</span></p>
+      </div>
       <p class="lm-cart-error" id="cart-error" role="alert"></p>
     </section>
 
