@@ -211,3 +211,15 @@ test('parseHealResponse repairs literal newlines inside JSON strings (live failu
   assert.equal(parsed.patches[0].path, 'patient/checkout.js');
   assert.match(parsed.summary, /rejecting unknown codes/);
 });
+
+test('parseHealResponse repairs invalid regex escapes inside JSON strings (live failure mode)', () => {
+  // The Patient sources contain an email regex; the model copies it into
+  // the JSON string with single backslashes (\s, \.), which strict JSON
+  // rejects as bad escapes. The repair must preserve the backslashes in
+  // the decoded file content.
+  const reply = '{"summary": "ok", "files": {"patient/checkout.js": "const re = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;\\n"}}';
+  const parsed = parseHealResponse(reply, ['patient/checkout.js']);
+  assert.equal(parsed.patches.length, 1);
+  assert.ok(parsed.patches[0].content.includes('[^\\s@]'), 'regex backslash preserved');
+  assert.ok(parsed.patches[0].content.includes('\\.'), 'escaped dot preserved');
+});
