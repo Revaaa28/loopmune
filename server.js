@@ -1,92 +1,40 @@
-// LoopMune — The Patient (Day 1 skeleton)
-// A small but real storefront web app with a deliberately rich attack surface:
-// product list + cart + checkout, login, search/filter, settings toggles,
-// and a live vitals header so damage is visible. Zero dependencies.
+// LoopMune — the Patient + Immune Log dashboard server (rebuilt).
 //
-// Fault injection (drill mode): faults are OFF by default. Toggle one with
-//   POST /api/faults  { "fault": "total-ignores-qty", "on": true }
-// or at startup:  LOOPMUNE_FAULTS=total-ignores-qty,negative-qty node server.js
-// Known faults (see design doc attack catalog v1):
-//   total-ignores-qty, negative-qty, coupon-anything, empty-cart-checkout,
-//   login-empty-password
-// The checkout total is otherwise computed by deterministic code, never by
-// the client. Every request/error is counted in /api/vitals.
+// One zero-dependency Node process serving:
+//   - the Patient storefront (public/index.html) and its JSON API, with all
+//     business rules delegated to the patient/ logic modules — the exact
+//     files M1 mutates and M2 heals;
+//   - the public Immune Log dashboard (public/log.html) backed by the
+//     append-only store in data/, plus the recorded per-incident evidence
+//     under evidence/ — all servable with no live Kane or LLM call, so the
+//     full loop stays inspectable even if a third-party service is down.
+//
+// The Patient's primary flow (browse -> cart -> checkout) has NO login
+// wall. The sign-in form is a demo surface, not a gate.
+
 import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync } from 'node:fs';
 import { extname, join, normalize } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { searchProducts } from './patient/catalog.js';
+import { createCart } from './patient/cart.js';
+import { placeOrder } from './patient/checkout.js';
+import { login } from './patient/auth.js';
+import { createImmuneLog } from './lib/immune-log.js';
 
-const root = join(fileURLToPath(new URL('.', import.meta.url)), 'public');
+const repoRoot = fileURLToPath(new URL('.', import.meta.url));
+const publicDir = join(repoRoot, 'public');
+const evidenceDir = join(repoRoot, 'evidence');
 const port = Number(process.env.PORT || 3000);
 
-export const FAULTS = {
-  'total-ignores-qty': false,
-  'negative-qty': false,
-  'coupon-anything': false,
-  'empty-cart-checkout': false,
-  'login-empty-password': false,
-};
-for (const f of (process.env.LOOPMUNE_FAULTS || '').split(',').map((s) => s.trim()).filter(Boolean)) {
-  if (f in FAULTS) FAULTS[f] = true;
-}
-
-const PRODUCTS = [
-  { id: 'p1', name: 'Antibody Tee — Navy', category: 'apparel', price: 189000, stock: 12 },
-  { id: 'p2', name: 'Macrophage Mug', category: 'home', price: 99000, stock: 30 },
-  { id: 'p3', name: 'Loop Sticker Pack', category: 'accessories', price: 25000, stock: 100 },
-  { id: 'p4', name: 'Immune Hoodie — Teal', category: 'apparel', price: 349000, stock: 8 },
-  { id: 'p5', name: 'Kane Verified Cap', category: 'accessories', price: 149000, stock: 15 },
-  { id: 'p6', name: 'Healing Balm 50ml', category: 'home', price: 79000, stock: 40 },
-];
+const cart = createCart();
+const orders = [];
+const immuneLog = createImmuneLog();
 
 const startedAt = Date.now();
 let requestCount = 0;
 let errorCount = 0;
-let cart = {}; // productId -> qty
-let orders = [];
-// Immune log: in-memory, persisted to data/log.json so a full attack → proof →
-// heal → proof cycle stays visible across restarts (ShareLinks expire in 7 days;
-// this log is the durable record). Set LOOPMUNE_NO_PERSIST=1 to disable (tests).
-const dataDir = join(fileURLToPath(new URL('.', import.meta.url)), 'data');
-const LOG_FILE = join(dataDir, 'log.json');
-let immuneLog = [];
-try {
-  if (existsSync(LOG_FILE)) immuneLog = JSON.parse(readFileSync(LOG_FILE, 'utf8'));
-} catch { immuneLog = []; }
-if (!Array.isArray(immuneLog) || immuneLog.length === 0) {
-  immuneLog = [
-    { ts: new Date().toISOString(), kind: 'system', text: 'Patient started — baseline healthy. No faults injected.' },
-  ];
-}
-
-function persistLog() {
-  if (process.env.LOOPMUNE_NO_PERSIST) return;
-  try {
-    mkdirSync(dataDir, { recursive: true });
-    writeFileSync(LOG_FILE, JSON.stringify(immuneLog, null, 2));
-  } catch { /* best-effort: the in-memory log stays authoritative */ }
-}
-
-function log(kind, text, evidence) {
-  immuneLog.unshift({ ts: new Date().toISOString(), kind, text, ...(evidence ? { evidence } : {}) });
-  if (immuneLog.length > 200) immuneLog.length = 200;
-  persistLog();
-}
-
-function cartTotal() {
-  let total = 0;
-  let items = 0;
-  for (const [id, qty] of Object.entries(cart)) {
-    const p = PRODUCTS.find((x) => x.id === id);
-    if (!p) continue;
-    // Deterministic total: price x quantity. The fault below deliberately
-    // breaks this (drill mode only) so Kane can catch it.
-    total += FAULTS['total-ignores-qty'] ? p.price : p.price * qty;
-    items += qty;
-  }
-  return { total, items };
-}
 
 function sendJson(res, code, obj) {
   res.writeHead(code, { 'Content-Type': 'application/json; charset=utf-8' });
@@ -100,15 +48,31 @@ async function readBody(req) {
   try { return text ? JSON.parse(text) : {}; } catch { return {}; }
 }
 
+function patientError(res, e) {
+  errorCount++;
+  const status = Number.isInteger(e?.status) ? e.status : 500;
+  sendJson(res, status, { error: e?.message || 'internal error' });
+}
+
 const MIME = {
   '.html': 'text/html; charset=utf-8',
   '.css': 'text/css; charset=utf-8',
   '.js': 'text/javascript; charset=utf-8',
   '.json': 'application/json; charset=utf-8',
+  '.jsonl': 'text/plain; charset=utf-8',
+  '.md': 'text/plain; charset=utf-8',
   '.svg': 'image/svg+xml',
   '.png': 'image/png',
   '.ico': 'image/x-icon',
 };
+
+async function serveFile(res, baseDir, relPath) {
+  const file = normalize(join(baseDir, relPath));
+  if (!file.startsWith(baseDir)) { res.writeHead(403).end('Forbidden'); return; }
+  const body = await readFile(file);
+  res.writeHead(200, { 'Content-Type': MIME[extname(file)] || 'application/octet-stream' });
+  res.end(body);
+}
 
 const server = createServer(async (req, res) => {
   requestCount++;
@@ -122,96 +86,94 @@ const server = createServer(async (req, res) => {
         uptimeSec: Math.floor((Date.now() - startedAt) / 1000),
         requests: requestCount,
         errors: errorCount,
-        faults: Object.entries(FAULTS).filter(([, v]) => v).map(([k]) => k),
+        cartItems: cart.totals().count,
+        orders: orders.length,
       });
     }
     if (path === '/api/products') {
-      const q = (url.searchParams.get('q') || '').toLowerCase();
-      const cat = url.searchParams.get('category') || '';
-      return sendJson(res, 200, PRODUCTS.filter((p) =>
-        (!q || p.name.toLowerCase().includes(q)) && (!cat || p.category === cat)));
+      return sendJson(res, 200, searchProducts(url.searchParams.get('q') || '', url.searchParams.get('category') || ''));
     }
     if (path === '/api/cart' && req.method === 'GET') {
-      const { total, items } = cartTotal();
-      return sendJson(res, 200, { cart, total, items });
+      return sendJson(res, 200, cart.snapshot());
     }
     if (path === '/api/cart/add' && req.method === 'POST') {
       const { id, qty = 1 } = await readBody(req);
-      const p = PRODUCTS.find((x) => x.id === id);
-      if (!p) { errorCount++; return sendJson(res, 404, { error: 'product not found' }); }
-      if (qty < 0 && !FAULTS['negative-qty']) { errorCount++; return sendJson(res, 400, { error: 'quantity cannot be negative' }); }
-      cart[id] = (cart[id] || 0) + qty;
-      if (cart[id] <= 0) delete cart[id];
-      const { total, items } = cartTotal();
-      return sendJson(res, 200, { cart, total, items });
+      try { return sendJson(res, 200, cart.add(id, qty)); }
+      catch (e) { return patientError(res, e); }
     }
     if (path === '/api/cart/remove' && req.method === 'POST') {
       const { id } = await readBody(req);
-      delete cart[id];
-      const { total, items } = cartTotal();
-      return sendJson(res, 200, { cart, total, items });
+      return sendJson(res, 200, cart.remove(id));
+    }
+    if (path === '/api/cart/set' && req.method === 'POST') {
+      const { id, qty } = await readBody(req);
+      try { return sendJson(res, 200, cart.set(id, qty)); }
+      catch (e) { return patientError(res, e); }
+    }
+    if (path === '/api/orders' && req.method === 'GET') {
+      return sendJson(res, 200, { orders: orders.slice().reverse() });
     }
     if (path === '/api/checkout' && req.method === 'POST') {
-      const { name, email, coupon = '' } = await readBody(req);
-      const { total, items } = cartTotal();
-      if (items === 0 && !FAULTS['empty-cart-checkout']) {
-        errorCount++;
-        log('repelled', 'Checkout with an empty cart was rejected.');
-        return sendJson(res, 400, { error: 'cart is empty' });
-      }
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email || '')) {
-        errorCount++; return sendJson(res, 400, { error: 'invalid email format' });
-      }
-      let discount = 0;
-      if (coupon) {
-        if (coupon === 'LOOP10') discount = Math.round(total * 0.1);
-        else if (!FAULTS['coupon-anything']) { errorCount++; return sendJson(res, 400, { error: 'unknown coupon code' }); }
-        else discount = Math.round(total * 0.5); // fault: any text = 50% off
-      }
-      const order = { id: `ORD-${Date.now()}`, name, email, items, total, discount, charged: total - discount, ts: new Date().toISOString() };
-      orders.push(order);
-      cart = {};
-      log('system', `Order ${order.id} placed — ${items} item(s), charged Rp${order.charged.toLocaleString('id-ID')}.`);
-      return sendJson(res, 200, { order });
+      const body = await readBody(req);
+      try {
+        const order = placeOrder(cart, body);
+        orders.push(order);
+        return sendJson(res, 200, { order });
+      } catch (e) { return patientError(res, e); }
     }
     if (path === '/api/login' && req.method === 'POST') {
       const { email, password } = await readBody(req);
-      if (!password && !FAULTS['login-empty-password']) {
-        errorCount++; return sendJson(res, 400, { error: 'password required' });
-      }
-      return sendJson(res, 200, { ok: true, user: email || 'guest@loopmune.local' });
+      try { return sendJson(res, 200, login(email, password)); }
+      catch (e) { return patientError(res, e); }
     }
     if (path === '/api/log' && req.method === 'GET') {
-      return sendJson(res, 200, { entries: immuneLog, orders: orders.slice(-10) });
+      return sendJson(res, 200, { incidents: immuneLog.readAll(), orders: orders.slice(-10) });
     }
-    if (path === '/api/incidents' && req.method === 'POST') {
-      // The orchestrator (M1/Kane Gate/M2) publishes every state transition here.
-      const { kind, text, evidence } = await readBody(req);
-      const KINDS = ['attack', 'verify', 'infected', 'repelled', 'patch', 'healed', 'chronic', 'system'];
-      if (!KINDS.includes(kind) || !text) { errorCount++; return sendJson(res, 400, { error: 'a known kind and text are required' }); }
-      log(kind, String(text), evidence ? String(evidence) : undefined);
-      return sendJson(res, 200, { ok: true });
+    if (path === '/api/summary' && req.method === 'GET') {
+      // Aggregate vitals for the dashboard's monitor header: counts by
+      // outcome, the freshest Kane verdict, and incident rhythm timings.
+      // Computed purely from the stored log — no live Kane/LLM call.
+      const incidents = immuneLog.readAll();
+      const counts = { total: incidents.length, healed: 0, failed: 0, repelled: 0, passed: 0, active: 0, kaneError: 0, error: 0 };
+      let lastKaneVerdict = null;
+      let totalCredits = 0;
+      for (const inc of incidents) {
+        if (inc.finalStatus === 'running') counts.active++;
+        else if (inc.finalStatus === 'healed') counts.healed++;
+        else if (inc.finalStatus === 'failed') counts.failed++;
+        else if (inc.finalStatus === 'repelled') counts.repelled++;
+        else if (inc.finalStatus === 'passed') counts.passed++;
+        else if (inc.finalStatus === 'kane-error') counts.kaneError++;
+        else if (inc.finalStatus === 'error') counts.error++;
+        for (const run of inc.kaneRuns || []) {
+          if (typeof run.credits === 'number') totalCredits += run.credits;
+          if (!lastKaneVerdict || String(run.at) > String(lastKaneVerdict.at)) {
+            lastKaneVerdict = {
+              at: run.at, phase: run.phase, passed: run.passed, status: run.status,
+              exitCode: run.exitCode, attack: inc.attack, testUrl: run.testUrl,
+            };
+          }
+        }
+      }
+      const lastIncidentAt = incidents.length ? incidents[0].startedAt : null;
+      return sendJson(res, 200, {
+        counts,
+        lastKaneVerdict,
+        lastIncidentAt,
+        secondsSinceLastIncident: lastIncidentAt
+          ? Math.max(0, Math.floor((Date.now() - Date.parse(lastIncidentAt)) / 1000))
+          : null,
+        totalKaneCredits: Math.round(totalCredits * 100) / 100,
+        generatedAt: new Date().toISOString(),
+      });
     }
-    if (path === '/api/reset' && req.method === 'POST') {
-      // Test support: restore a known-good baseline (cart + orders cleared).
-      cart = {};
-      orders = [];
-      return sendJson(res, 200, { ok: true });
-    }
-    if (path === '/api/faults' && req.method === 'POST') {
-      const { fault, on } = await readBody(req);
-      if (!(fault in FAULTS)) { errorCount++; return sendJson(res, 400, { error: 'unknown fault' }); }
-      FAULTS[fault] = Boolean(on);
-      log('system', `Fault injection ${FAULTS[fault] ? 'ON' : 'OFF'}: ${fault}.`);
-      return sendJson(res, 200, { faults: FAULTS });
+    if (path.startsWith('/evidence/')) {
+      return await serveFile(res, evidenceDir, path.slice('/evidence/'.length));
     }
 
-    let filePath = path === '/' ? '/index.html' : path;
-    const file = normalize(join(root, filePath));
-    if (!file.startsWith(root)) { res.writeHead(403).end('Forbidden'); return; }
-    const body = await readFile(file);
-    res.writeHead(200, { 'Content-Type': MIME[extname(file)] || 'application/octet-stream' });
-    res.end(body);
+    const rel = path === '/' ? '/index.html' : path;
+    if (!existsSync(join(publicDir, rel))) throw new Error('not found');
+    return await serveFile(res, publicDir, rel);
   } catch {
     errorCount++;
     res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' }).end('Not found');
@@ -221,7 +183,6 @@ const server = createServer(async (req, res) => {
 if (process.env.NODE_ENV !== 'test') {
   server.listen(port, () => {
     console.log(`LoopMune Patient listening on http://localhost:${port}`);
-    console.log(`Faults on: ${Object.entries(FAULTS).filter(([, v]) => v).map(([k]) => k).join(', ') || 'none'}`);
   });
 }
 export default server;

@@ -1,51 +1,72 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>LoopMune — Immune Log</title>
-<link rel="icon" type="image/png" href="/logo.png">
-<style>
-  :root { --navy:#0b1226; --cyan:#22d3ee; --teal:#2dd4bf; --violet:#8b5cf6; --ink:#e5e7eb; --muted:#94a3b8; --card:#111a33; --line:#1e2a4a; }
-  body { margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif; background:var(--navy); color:var(--ink); }
-  header { padding:16px 20px; border-bottom:1px solid var(--line); }
-  header a { color:var(--cyan); text-decoration:none; }
-  main { max-width:900px; margin:0 auto; padding:20px; }
-  .stats { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:16px; }
-  .stat { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:12px 16px; }
-  .stat b { font-size:22px; display:block; }
-  .stat span { color:var(--muted); font-size:13px; }
-  .entry { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:12px 14px; margin-bottom:10px; font-size:14px; }
-  .entry .ts { color:var(--muted); font-size:12px; }
-  .entry .kind { display:inline-block; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.5px; padding:2px 8px; border-radius:20px; background:#0d1530; border:1px solid var(--line); margin-right:8px; }
-</style>
+<title>Immune Log — LoopMune</title>
+<link rel="stylesheet" href="/base.css">
 </head>
-<body>
-<header><a href="/">← Back to the store</a></header>
-<main>
-  <h1 style="margin:0 0 4px">Immune Log</h1>
-  <p style="color:var(--muted);margin:0 0 18px">Every attack, Kane verdict, patch and re-verification — published live. Kane CLI is the only accepted proof that a break is real.</p>
-  <div class="stats" id="stats"></div>
-  <div id="entries"><p style="color:var(--muted)">Loading…</p></div>
+<body class="lm-page lm-page-log">
+<header class="lm-header">
+  <div class="lm-brand">
+    <img class="lm-logo" src="/logo.png" alt="LoopMune logo" width="40" height="40">
+    <span class="lm-wordmark">LoopMune</span>
+  </div>
+  <nav class="lm-nav">
+    <a class="lm-nav-store" href="/">Back to the store</a>
+  </nav>
+</header>
+
+<main class="lm-main lm-main-log">
+  <h1 class="lm-log-heading">Immune Log</h1>
+  <p class="lm-log-intro">This page is the store's immune system at work. Something breaks the store, an automated checker proves whether the break is real, and an AI agent fixes the code. Every round is recorded below, exactly as it happened — this page reads stored records only, so it stays truthful even if a service behind the scenes is down.</p>
+
+  <section class="lm-now" aria-label="What is happening right now">
+    <h2 class="lm-now-heading">Right now</h2>
+    <p class="lm-now-state" id="now-state">Reading the latest records…</p>
+    <p class="lm-now-next" id="now-next"></p>
+    <p class="lm-now-action"><a class="lm-button lm-button-primary" href="/">Visit the store</a></p>
+  </section>
+
+  <section class="lm-actors" aria-label="Who does what">
+    <h2 class="lm-actors-heading">Who does what</h2>
+    <div class="lm-actor">
+      <h3 class="lm-actor-name">The Breaker</h3>
+      <p>Breaks the store on purpose — a safety check removed here, a wrong total there — the way a careless edit or an attacker would.</p>
+    </div>
+    <div class="lm-actor">
+      <h3 class="lm-actor-name">Kane CLI — the Checker</h3>
+      <p>Opens the store in a real browser and uses it like a customer: adds to the cart, checks out, signs in. Only Kane's verdict counts — if Kane says the store works, the break was not real.</p>
+    </div>
+    <div class="lm-actor">
+      <h3 class="lm-actor-name">The Healer</h3>
+      <p>An AI agent. It reads Kane's failure report, works out what is wrong in the code, rewrites it — then Kane checks again.</p>
+    </div>
+  </section>
+
+  <section class="lm-summary" aria-label="Immune system summary">
+    <div class="lm-chip">Healed: <strong class="lm-summary-healed">–</strong></div>
+    <div class="lm-chip">Active: <strong class="lm-summary-active">–</strong></div>
+    <div class="lm-chip">Failed: <strong class="lm-summary-failed">–</strong></div>
+    <div class="lm-chip">Repelled: <strong class="lm-summary-repelled">–</strong></div>
+    <div class="lm-chip">Last Kane verdict: <strong class="lm-summary-verdict">–</strong></div>
+    <div class="lm-chip">Last incident: <strong class="lm-summary-since">–</strong></div>
+    <div class="lm-chip">Updated: <strong class="lm-summary-updated">–</strong></div>
+  </section>
+
+  <div class="lm-filters" role="group" aria-label="Filter incidents by outcome">
+    <button class="lm-chip lm-chip-filter" type="button" data-filter="all" aria-pressed="true">All</button>
+    <button class="lm-chip lm-chip-filter" type="button" data-filter="healed" aria-pressed="false">Healed</button>
+    <button class="lm-chip lm-chip-filter" type="button" data-filter="running" aria-pressed="false">Active</button>
+    <button class="lm-chip lm-chip-filter" type="button" data-filter="failed" aria-pressed="false">Failed</button>
+    <button class="lm-chip lm-chip-filter" type="button" data-filter="repelled" aria-pressed="false">Repelled</button>
+  </div>
+
+  <p class="lm-banner" id="log-error" role="alert" hidden></p>
+  <p class="lm-log-state" id="log-state" role="status">Loading incidents…</p>
+  <ol class="lm-incidents" id="incidents"></ol>
 </main>
-<script>
-async function load() {
-  const v = await (await fetch('/api/vitals')).json();
-  const log = await (await fetch('/api/log')).json();
-  const kinds = {};
-  log.entries.forEach((e) => kinds[e.kind] = (kinds[e.kind] || 0) + 1);
-  document.getElementById('stats').innerHTML =
-    `<div class="stat"><b>${v.uptimeSec}s</b><span>uptime</span></div>` +
-    `<div class="stat"><b>${v.requests}</b><span>requests</span></div>` +
-    `<div class="stat"><b>${v.errors}</b><span>errors</span></div>` +
-    `<div class="stat"><b>${kinds.infected || 0}</b><span>infections confirmed</span></div>` +
-    `<div class="stat"><b>${kinds.healed || 0}</b><span>healed</span></div>` +
-    `<div class="stat"><b>${kinds.repelled || 0}</b><span>attacks repelled</span></div>`;
-  const COLORS = { infected:'#f87171', healed:'#34d399', repelled:'#2dd4bf', attack:'#a78bfa', patch:'#22d3ee', chronic:'#f59e0b', verify:'#94a3b8', system:'#94a3b8' };
-  document.getElementById('entries').innerHTML = log.entries.map((e) =>
-    `<div class="entry"><span class="kind" style="color:${COLORS[e.kind] || '#e5e7eb'}">${e.kind}</span>${e.text}${e.evidence ? ` · <a href="${e.evidence}" target="_blank" rel="noopener" style="color:var(--cyan)">Kane evidence ↗</a>` : ''}<div class="ts">${new Date(e.ts).toLocaleString()}</div></div>`).join('') || '<p style="color:var(--muted)">No incidents yet.</p>';
-}
-load(); setInterval(load, 5000);
-</script>
+
+<script src="/log.js"></script>
 </body>
 </html>

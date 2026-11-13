@@ -1,182 +1,98 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>LoopMune Store — The Patient</title>
-<link rel="icon" type="image/png" href="/logo.png">
-<style>
-  :root { --navy:#0b1226; --cyan:#22d3ee; --teal:#2dd4bf; --violet:#8b5cf6; --ink:#e5e7eb; --muted:#94a3b8; --card:#111a33; --line:#1e2a4a; --danger:#f87171; --good:#34d399; }
-  * { box-sizing:border-box; }
-  body { margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif; background:var(--navy); color:var(--ink); }
-  header { background:linear-gradient(90deg,#0b1226,#131c3f 55%,#1b1440); border-bottom:1px solid var(--line); padding:14px 20px; display:flex; gap:18px; align-items:center; flex-wrap:wrap; }
-  .logo { font-weight:800; font-size:20px; letter-spacing:.3px; }
-  .logo span { background:linear-gradient(90deg,var(--cyan),var(--teal),var(--violet)); -webkit-background-clip:text; background-clip:text; color:transparent; }
-  .vitals { margin-left:auto; display:flex; gap:16px; font-size:13px; color:var(--muted); flex-wrap:wrap; }
-  .vitals b { color:var(--ink); }
-  .vitals .fault { color:var(--danger); font-weight:700; }
-  main { max-width:1060px; margin:0 auto; padding:20px; display:grid; grid-template-columns:1fr 320px; gap:20px; }
-  @media (max-width:820px){ main{grid-template-columns:1fr;} }
-  .card { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:16px; margin-bottom:16px; }
-  h2 { margin:0 0 12px; font-size:17px; }
-  .toolbar { display:flex; gap:10px; flex-wrap:wrap; }
-  input,select,button { font:inherit; padding:9px 11px; border-radius:9px; border:1px solid var(--line); background:#0d1530; color:var(--ink); }
-  input:focus,select:focus { outline:2px solid var(--cyan); }
-  button { background:linear-gradient(90deg,var(--cyan),var(--teal)); color:#06202a; font-weight:700; border:none; cursor:pointer; }
-  button.ghost { background:transparent; border:1px solid var(--line); color:var(--ink); font-weight:600; }
-  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(210px,1fr)); gap:12px; }
-  .product { border:1px solid var(--line); border-radius:12px; padding:12px; background:#0d1530; }
-  .product h3 { margin:0 0 4px; font-size:15px; }
-  .product .price { font-weight:800; color:var(--cyan); }
-  .product .meta { color:var(--muted); font-size:12px; margin:4px 0 10px; }
-  .cart-line { display:flex; justify-content:space-between; gap:8px; padding:7px 0; border-bottom:1px solid var(--line); font-size:14px; }
-  .total { display:flex; justify-content:space-between; font-weight:800; padding-top:10px; font-size:16px; }
-  .msg { font-size:13px; min-height:18px; margin-top:8px; }
-  .msg.err { color:var(--danger); } .msg.ok { color:var(--good); }
-  label { display:block; font-size:13px; color:var(--muted); margin:10px 0 4px; }
-  label input, label select { width:100%; }
-  .row { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
-  .toggle { display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid var(--line); font-size:14px; }
-  footer { max-width:1060px; margin:0 auto; padding:0 20px 28px; color:var(--muted); font-size:13px; }
-  footer a { color:var(--cyan); }
-</style>
+<title>LoopMune Store — the Patient</title>
+<link rel="stylesheet" href="/base.css">
 </head>
-<body>
-<header>
-  <div class="logo"><img src="/logo.png" alt="LoopMune logo" style="height:30px;vertical-align:-8px;margin-right:8px;border-radius:7px">LoopMune <span>Store</span></div>
-  <div style="color:var(--muted);font-size:13px">The Patient — every heal, proven.</div>
-  <div class="vitals" id="vitals">loading vitals…</div>
+<body class="lm-page lm-page-store">
+<header class="lm-header">
+  <div class="lm-brand">
+    <img class="lm-logo" src="/logo.png" alt="LoopMune logo" width="40" height="40">
+    <span class="lm-wordmark">LoopMune</span>
+  </div>
+  <nav class="lm-nav">
+    <a class="lm-nav-log" href="/log.html">Open the immune log</a>
+  </nav>
 </header>
-<main>
-  <section>
-    <div class="card">
-      <h2>Shop</h2>
-      <div class="toolbar">
-        <input id="q" type="search" placeholder="Search products…" style="flex:1;min-width:180px">
-        <select id="cat">
+
+<section class="lm-vitals" aria-label="Patient vitals">
+  <span class="lm-vital lm-vital-status">Status: <strong class="lm-vital-status-value">…</strong></span>
+  <span class="lm-vital">Uptime: <strong class="lm-vital-uptime">…</strong></span>
+  <span class="lm-vital">Requests: <strong class="lm-vital-requests">…</strong></span>
+  <span class="lm-vital">Errors: <strong class="lm-vital-errors">…</strong></span>
+</section>
+
+<main class="lm-main">
+  <section class="lm-store">
+    <h1 class="lm-store-heading">LoopMune Store</h1>
+    <p class="lm-store-intro">Small merch store for the LoopMune project — and the Patient in its immune-system demo. Browse, fill a cart, check out. If something here breaks, Kane CLI proves it in a real browser and the healer agent patches the code; every cycle lands in the immune log.</p>
+
+    <form class="lm-filter" id="filter-form">
+      <label class="lm-field">Search products
+        <input class="lm-input" id="filter-q" type="search" placeholder="Try “mug” or “hoodie”">
+      </label>
+      <label class="lm-field">Category
+        <select class="lm-input" id="filter-category">
           <option value="">All categories</option>
           <option value="apparel">Apparel</option>
           <option value="home">Home</option>
           <option value="accessories">Accessories</option>
         </select>
-        <button class="ghost" id="searchBtn">Search</button>
-      </div>
-      <div class="grid" id="products" style="margin-top:14px"></div>
-    </div>
+      </label>
+    </form>
 
-    <div class="card">
-      <h2>Sign in</h2>
-      <div class="row">
-        <input id="loginEmail" type="email" placeholder="you@example.com" style="flex:1;min-width:160px">
-        <input id="loginPass" type="password" placeholder="Password" style="flex:1;min-width:140px">
-        <button id="loginBtn">Sign in</button>
-      </div>
-      <div class="msg" id="loginMsg"></div>
-    </div>
-
-    <div class="card">
-      <h2>Settings</h2>
-      <div class="toggle"><span>Dark mode (this app is dark by design)</span><input type="checkbox" id="setDark" checked></div>
-      <div class="toggle"><span>Email receipts after checkout</span><input type="checkbox" id="setReceipt" checked></div>
-      <div class="toggle"><span>Show prices with tax included</span><input type="checkbox" id="setTax"></div>
-      <div class="msg" id="settingsMsg">Settings save on this device and survive a reload.</div>
-    </div>
+    <p class="lm-products-state" id="products-state" role="status">Loading products…</p>
+    <div class="lm-products" id="products"></div>
   </section>
 
-  <aside>
-    <div class="card">
-      <h2>Your cart <span id="cartCount"></span></h2>
-      <div id="cartLines"><p style="color:var(--muted);font-size:14px">Your cart is empty.</p></div>
-      <div class="total"><span>Total</span><span id="cartTotal">Rp0</span></div>
-      <form id="checkoutForm">
-        <label>Name<input id="coName" required placeholder="Revly Rotty"></label>
-        <label>Email<input id="coEmail" type="email" required placeholder="you@example.com"></label>
-        <label>Coupon (try LOOP10 for 10% off)<input id="coCoupon" placeholder="Coupon code"></label>
-        <button type="submit" style="width:100%;margin-top:12px">Checkout</button>
-      </form>
-      <div class="msg" id="checkoutMsg"></div>
-    </div>
-    <div class="card">
-      <h2>Immune log</h2>
-      <p style="color:var(--muted);font-size:14px;margin:0 0 10px">Every attack, Kane verdict, patch and re-verification is published here.</p>
-      <a href="/log.html" style="color:var(--cyan)">Open the immune log →</a>
-    </div>
+  <aside class="lm-panel">
+    <section class="lm-cart" aria-label="Cart">
+      <h2 class="lm-cart-heading">Cart</h2>
+      <p class="lm-cart-empty" id="cart-empty">Your cart is empty. Add something from the store to get started.</p>
+      <ul class="lm-cart-lines" id="cart-lines"></ul>
+      <p class="lm-cart-count">Cart count: <span class="lm-cart-count-value" id="cart-count">0</span></p>
+      <p class="lm-cart-total">Cart total: <span class="lm-cart-total-value" id="cart-total">Rp0</span></p>
+      <p class="lm-cart-error" id="cart-error" role="alert"></p>
+    </section>
+
+    <form class="lm-checkout" id="checkout-form">
+      <h2 class="lm-checkout-heading">Checkout</h2>
+      <label class="lm-field">Name
+        <input class="lm-input" name="name" type="text" autocomplete="name" placeholder="Your name">
+      </label>
+      <label class="lm-field">Email
+        <input class="lm-input" name="email" type="email" autocomplete="email" placeholder="you@example.com">
+      </label>
+      <label class="lm-field">Coupon (optional)
+        <input class="lm-input" name="coupon" type="text" placeholder="LOOP10">
+      </label>
+      <button class="lm-button lm-button-primary" id="checkout-button" type="submit">Place order</button>
+      <p class="lm-checkout-result" id="checkout-result" role="status"></p>
+    </form>
+
+    <section class="lm-orders" aria-label="Orders">
+      <h2 class="lm-orders-heading">Orders this session</h2>
+      <p class="lm-orders-empty" id="orders-empty">No orders yet.</p>
+      <ul class="lm-orders-list" id="orders-list"></ul>
+    </section>
+
+    <form class="lm-login" id="login-form">
+      <h2 class="lm-login-heading">Sign in</h2>
+      <p class="lm-login-note">Demo sign-in only — the store works without an account. Any email with a non-empty password is accepted.</p>
+      <label class="lm-field">Email
+        <input class="lm-input" name="email" type="email" autocomplete="username" placeholder="you@example.com">
+      </label>
+      <label class="lm-field">Password
+        <input class="lm-input" name="password" type="password" autocomplete="current-password" placeholder="Any non-empty password">
+      </label>
+      <button class="lm-button" type="submit">Sign in</button>
+      <p class="lm-login-result" id="login-result" role="status"></p>
+    </form>
   </aside>
 </main>
-<footer>
-  LoopMune — a self-healing web app. Kane CLI is the only accepted proof that a break is real.
-  Built for the Kane CLI Online Hackathon, Nov 12–19 2026.
-</footer>
-<script>
-const $ = (id) => document.getElementById(id);
-const rp = (n) => 'Rp' + Number(n).toLocaleString('id-ID');
-async function api(path, opts) {
-  const r = await fetch(path, opts);
-  const data = await r.json().catch(() => ({}));
-  if (!r.ok) throw new Error(data.error || ('HTTP ' + r.status));
-  return data;
-}
-async function refreshVitals() {
-  try {
-    const v = await api('/api/vitals');
-    $('vitals').innerHTML =
-      `uptime <b>${v.uptimeSec}s</b> · requests <b>${v.requests}</b> · errors <b>${v.errors}</b>` +
-      (v.faults.length ? ` · <span class="fault">FAULTS: ${v.faults.join(', ')}</span>` : ' · <span style="color:var(--good)">healthy</span>');
-  } catch { $('vitals').textContent = 'vitals unavailable'; }
-}
-async function loadProducts() {
-  const q = $('q').value, cat = $('cat').value;
-  const list = await api('/api/products?q=' + encodeURIComponent(q) + '&category=' + encodeURIComponent(cat));
-  $('products').innerHTML = list.length ? list.map((p) => `
-    <div class="product">
-      <h3>${p.name}</h3>
-      <div class="price">${rp(p.price)}</div>
-      <div class="meta">${p.category} · ${p.stock} in stock</div>
-      <button data-add="${p.id}">Add to cart</button>
-    </div>`).join('') : '<p style="color:var(--muted)">No products match your search.</p>';
-  document.querySelectorAll('[data-add]').forEach((b) => b.onclick = async () => {
-    await api('/api/cart/add', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: b.dataset.add, qty: 1 }) });
-    loadCart();
-  });
-}
-async function loadCart() {
-  const { cart, total, items } = await api('/api/cart');
-  $('cartCount').textContent = items ? `(${items})` : '';
-  $('cartTotal').textContent = rp(total);
-  $('cartLines').innerHTML = items ? Object.entries(cart).map(([id, qty]) => {
-    const p = window._products?.find((x) => x.id === id);
-    return `<div class="cart-line"><span>${p ? p.name : id} × ${qty}</span><span>${rp((p ? p.price : 0) * qty)} <button class="ghost" data-rm="${id}" style="padding:2px 8px">✕</button></span></div>`;
-  }).join('') : '<p style="color:var(--muted);font-size:14px">Your cart is empty.</p>';
-  document.querySelectorAll('[data-rm]').forEach((b) => b.onclick = async () => {
-    await api('/api/cart/remove', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: b.dataset.rm }) });
-    loadCart();
-  });
-}
-$('searchBtn').onclick = async () => { window._products = await api('/api/products'); loadProducts(); };
-$('loginBtn').onclick = async () => {
-  try {
-    const r = await api('/api/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: $('loginEmail').value, password: $('loginPass').value }) });
-    $('loginMsg').className = 'msg ok'; $('loginMsg').textContent = 'Signed in as ' + r.user + '.';
-  } catch (e) { $('loginMsg').className = 'msg err'; $('loginMsg').textContent = e.message; }
-};
-$('checkoutForm').onsubmit = async (e) => {
-  e.preventDefault();
-  try {
-    const r = await api('/api/checkout', { method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: $('coName').value, email: $('coEmail').value, coupon: $('coCoupon').value.trim() }) });
-    $('checkoutMsg').className = 'msg ok';
-    $('checkoutMsg').textContent = `Order ${r.order.id} placed — charged ${rp(r.order.charged)}. Thank you!`;
-    loadCart();
-  } catch (err) { $('checkoutMsg').className = 'msg err'; $('checkoutMsg').textContent = err.message; }
-};
-// Settings persist in localStorage and survive reload.
-for (const id of ['setDark', 'setReceipt', 'setTax']) {
-  const el = $(id);
-  const saved = localStorage.getItem('loopmune:' + id);
-  if (saved !== null) el.checked = saved === '1';
-  el.onchange = () => { localStorage.setItem('loopmune:' + id, el.checked ? '1' : '0'); $('settingsMsg').textContent = 'Settings saved.'; };
-}
-(async () => { window._products = await api('/api/products'); await loadProducts(); await loadCart(); refreshVitals(); setInterval(refreshVitals, 5000); })();
-</script>
+
+<script src="/app.js"></script>
 </body>
 </html>
