@@ -200,3 +200,14 @@ test('parseHealResponse accepts fenced JSON, bare JSON, and single-file code blo
   assert.equal(c.patches[0].path, 'patient/auth.js');
   assert.throws(() => parseHealResponse('no patch here', ['patient/auth.js']), /no parseable patch/);
 });
+
+test('parseHealResponse repairs literal newlines inside JSON strings (live failure mode)', () => {
+  // Exactly what the model emitted in the first coupon hook cycle: the
+  // summary string wraps mid-sentence with a raw newline, which strict
+  // JSON.parse rejects.
+  const reply = '{"summary": "Fixed the coupon bug by rejecting unknown codes when a non-empty coupon is not\n found in the registry.", "files": {"patient/checkout.js": "export const ok = true;\\n"}}';
+  const parsed = parseHealResponse(reply, ['patient/checkout.js']);
+  assert.equal(parsed.patches.length, 1);
+  assert.equal(parsed.patches[0].path, 'patient/checkout.js');
+  assert.match(parsed.summary, /rejecting unknown codes/);
+});
