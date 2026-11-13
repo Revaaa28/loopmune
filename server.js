@@ -22,6 +22,8 @@ import { createCart } from './patient/cart.js';
 import { placeOrder } from './patient/checkout.js';
 import { login } from './patient/auth.js';
 import { createImmuneLog } from './lib/immune-log.js';
+import { ATTACKS } from './lib/attacks.js';
+import { createBreaker } from './lib/breaker.js';
 
 const repoRoot = fileURLToPath(new URL('.', import.meta.url));
 const publicDir = join(repoRoot, 'public');
@@ -31,6 +33,14 @@ const port = Number(process.env.PORT || 3000);
 const cart = createCart();
 const orders = [];
 const immuneLog = createImmuneLog();
+
+// The dashboard's "break it yourself" control. LOOPMUNE_BREAK=off forces
+// the unavailable state (used by the test suite and by hosted copies that
+// must not start live cycles); otherwise availability is auto-detected
+// (Kane CLI on PATH + the Healer's AI helper present).
+const breaker = process.env.LOOPMUNE_BREAK === 'off'
+  ? createBreaker({ root: repoRoot, availability: { ok: false, reason: 'Live cycles are switched off on this server. The recorded cycles below are complete and replayable from their stored evidence.' } })
+  : createBreaker({ root: repoRoot });
 
 const startedAt = Date.now();
 let requestCount = 0;
@@ -137,6 +147,9 @@ const server = createServer(async (req, res) => {
       const counts = { total: incidents.length, healed: 0, failed: 0, repelled: 0, passed: 0, active: 0, kaneError: 0, error: 0 };
       let lastKaneVerdict = null;
       let totalCredits = 0;
+      let totalKaneRuns = 0;
+      let breaksConfirmed = 0;
+      const healDurationsSec = [];
       for (const inc of incidents) {
         if (inc.finalStatus === 'running') counts.active++;
         else if (inc.finalStatus === 'healed') counts.healed++;
@@ -145,7 +158,13 @@ const server = createServer(async (req, res) => {
         else if (inc.finalStatus === 'passed') counts.passed++;
         else if (inc.finalStatus === 'kane-error') counts.kaneError++;
         else if (inc.finalStatus === 'error') counts.error++;
+        if ((inc.events || []).some((e) => e.type === 'infected')) breaksConfirmed++;
+        if (inc.finalStatus === 'healed' && inc.startedAt && inc.endedAt) {
+          const secs = (Date.parse(inc.endedAt) - Date.parse(inc.startedAt)) / 1000;
+          if (Number.isFinite(secs) && secs >= 0) healDurationsSec.push(secs);
+        }
         for (const run of inc.kaneRuns || []) {
+          totalKaneRuns++;
           if (typeof run.credits === 'number') totalCredits += run.credits;
           if (!lastKaneVerdict || String(run.at) > String(lastKaneVerdict.at)) {
             lastKaneVerdict = {
@@ -156,6 +175,17 @@ const server = createServer(async (req, res) => {
         }
       }
       const lastIncidentAt = incidents.length ? incidents[0].startedAt : null;
+      // The watch list: every break the monitor can prove in a browser,
+      // with the newest recorded outcome for each — straight from the
+      // real catalog and the real log.
+      const watchList = ATTACKS.filter((a) => a.prompt).map((a) => {
+        const latest = incidents.find((i) => i.attack === a.id) || null;
+        return {
+          id: a.id, name: a.name, surface: a.surface, suspicion: a.suspicion,
+          lastOutcome: latest ? latest.finalStatus : null,
+          lastAt: latest ? latest.startedAt : null,
+        };
+      });
       return sendJson(res, 200, {
         counts,
         lastKaneVerdict,
@@ -164,8 +194,27 @@ const server = createServer(async (req, res) => {
           ? Math.max(0, Math.floor((Date.now() - Date.parse(lastIncidentAt)) / 1000))
           : null,
         totalKaneCredits: Math.round(totalCredits * 100) / 100,
+        totalKaneRuns,
+        breaksConfirmed,
+        healRate: (counts.healed + counts.failed) > 0
+          ? Math.round((counts.healed / (counts.healed + counts.failed)) * 1000) / 1000
+          : null,
+        meanHealSeconds: healDurationsSec.length
+          ? Math.round(healDurationsSec.reduce((a, b) => a + b, 0) / healDurationsSec.length)
+          : null,
+        watchList,
         generatedAt: new Date().toISOString(),
       });
+    }
+    if (path === '/api/break/status' && req.method === 'GET') {
+      return sendJson(res, 200, breaker.status());
+    }
+    if (path === '/api/break' && req.method === 'POST') {
+      const body = await readBody(req);
+      const result = breaker.start(body.attackId || 'total-ignores-qty');
+      return sendJson(res, result.status, result.ok
+        ? { ok: true, attackId: result.attackId, attackName: result.attackName }
+        : { ok: false, error: result.error });
     }
     if (path.startsWith('/evidence/')) {
       return await serveFile(res, evidenceDir, path.slice('/evidence/'.length));
