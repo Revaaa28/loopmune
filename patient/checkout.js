@@ -31,7 +31,7 @@ export function placeOrder(cart, { name, email, coupon = '' } = {}) {
   if (coupon) {
     const rate = COUPONS[coupon];
     if (rate === undefined) {
-      throw httpError(400, 'unknown coupon code');
+      throw httpError(400, 'invalid coupon code');
     }
     discount = Math.round(total * rate);
   }

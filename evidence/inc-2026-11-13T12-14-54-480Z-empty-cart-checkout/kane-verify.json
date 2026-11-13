@@ -1,0 +1,129 @@
+{
+  "phase": "verify",
+  "at": "2026-11-13T12:16:15.572Z",
+  "exitCode": 0,
+  "status": "passed",
+  "passed": true,
+  "testUrl": "https://test-manager.lambdatest.com/projects/01M730R4QV2KQWHS1GAKND4KMY/test-cases/01M7ADA88A4RHHE189AQTHERJE/dashboard/share/US_FIJ9KUOMK5A3KAKQ0AJZJ1W7XY4NHR87WV6MQLS4Q5F6I62L5MUIE3OOIW40IBGT?type=summary&agentView=true&fqdn=summary-page",
+  "credits": 7.06292,
+  "runEnd": {
+    "type": "run_end",
+    "status": "passed",
+    "summary": "Opened the LoopMune store and went to the checkout form without adding any items to the cart.\nEntered the name Kane Check and email kane@example.com, then submitted the checkout form.\nThe checkout was rejected because the cart was empty, and no order confirmation appeared.",
+    "one_liner": "submitted an empty-cart checkout on the LoopMune store",
+    "final_state": {
+      "url": "http://localhost:3100/",
+      "cart_empty_error": "true",
+      "checkout_rejected": "true",
+      "order_confirmation": "false"
+    },
+    "reason": "Objective completed",
+    "duration": 51.7,
+    "bifurcated": false,
+    "total_runs": 1,
+    "context": {
+      "memory": {
+        "checkout_rejected": {
+          "extracted_value": "true",
+          "operator": "equals",
+          "transforms": [],
+          "json_path": null,
+          "reasoning": "value: 'true' -> 'true'; equals 'true' -> PASS",
+          "analyzer_type": "textual_visual",
+          "step": 7,
+          "query": "whether the checkout rejected state is present (in the checkout status message)",
+          "condition": "The checkout is REJECTED.",
+          "human_description": "Checking whether the checkout rejection is shown",
+          "expected_value": "true",
+          "subject": "the checkout rejected state",
+          "must_be": "present",
+          "code_js": "el(72).textContent.trim().toLowerCase().includes('checkout error')",
+          "wrapped_js": "(els) => {\n  const __m = {72: 0};\n  const el = (i) => els[__m[i]];\n  const __v = (el(72).textContent.trim().toLowerCase().includes('checkout error'));\n  return (typeof __v === 'boolean' ? String(__v) : __v);\n}",
+          "locators": [
+            "internal:text=\"Checkout error: cart is empty\"i"
+          ],
+          "needs_unit_conversion": false
+        },
+        "cart_empty_error": {
+          "extracted_value": "true",
+          "operator": "equals",
+          "transforms": [],
+          "json_path": null,
+          "reasoning": "value: 'true' -> 'true'; equals 'true' -> PASS",
+          "analyzer_type": "textual_visual",
+          "step": 7,
+          "query": "whether an error saying the cart is empty is present (in the checkout status message)",
+          "condition": "An error says the cart is empty.",
+          "human_description": "Checking whether the cart-empty error is shown",
+          "expected_value": "true",
+          "subject": "an error saying the cart is empty",
+          "must_be": "present",
+          "code_js": "el(72).textContent.trim().toLowerCase().includes('cart is empty')",
+          "wrapped_js": "(els) => {\n  const __m = {72: 0};\n  const el = (i) => els[__m[i]];\n  const __v = (el(72).textContent.trim().toLowerCase().includes('cart is empty'));\n  return (typeof __v === 'boolean' ? String(__v) : __v);\n}",
+          "locators": [
+            "internal:text=\"Checkout error: cart is empty\"i"
+          ],
+          "needs_unit_conversion": false
+        },
+        "order_confirmation": {
+          "extracted_value": "false",
+          "operator": "equals",
+          "transforms": [],
+          "json_path": null,
+          "reasoning": "value: 'false' -> 'false'; equals 'false' -> PASS",
+          "analyzer_type": "visual",
+          "step": 7,
+          "query": "whether an order confirmation is present (in the store page order and checkout areas)",
+          "condition": "No order confirmation appears.",
+          "human_description": "Checking whether an order confirmation is shown",
+          "expected_value": "false",
+          "subject": "an order confirmation",
+          "must_be": "absent"
+        }
+      },
+      "variables": {
+        "checkout_rejected": {
+          "syntax": "{{checkout_rejected}}",
+          "value": "true",
+          "type": "memory",
+          "secret": false
+        },
+        "cart_empty_error": {
+          "syntax": "{{cart_empty_error}}",
+          "value": "true",
+          "type": "memory",
+          "secret": false
+        },
+        "order_confirmation": {
+          "syntax": "{{order_confirmation}}",
+          "value": "false",
+          "type": "memory",
+          "secret": false
+        }
+      },
+      "pointer": "(passed) submitted an empty-cart checkout on the LoopMune store"
+    },
+    "credits_consumed": 7.06292,
+    "session_dir": "/home/hatch/.testmuai/kaneai/sessions/a6b0a268-d3a4-4a31-873e-d87b11825530",
+    "run_dir": "/home/hatch/.testmuai/kaneai/sessions/a6b0a268-d3a4-4a31-873e-d87b11825530/runs/0",
+    "result_code": 100,
+    "reason_code": "success.complete",
+    "per_flow_metadata": [
+      {
+        "result_code": "100",
+        "reason_code": "success.complete",
+        "error_message": null,
+        "summary": "Opened the LoopMune store and went to the checkout form without adding any items to the cart.\nEntered the name Kane Check and email kane@example.com, then submitted the checkout form.\nThe checkout was rejected because the cart was empty, and no order confirmation appeared.",
+        "one_liner": "submitted an empty-cart checkout on the LoopMune store",
+        "credits_consumed": 7.06292
+      }
+    ],
+    "run_id": "run-0",
+    "test_url": "https://test-manager.lambdatest.com/projects/01M730R4QV2KQWHS1GAKND4KMY/test-cases/01M7ADA88A4RHHE189AQTHERJE/dashboard/share/US_FIJ9KUOMK5A3KAKQ0AJZJ1W7XY4NHR87WV6MQLS4Q5F6I62L5MUIE3OOIW40IBGT?type=summary&agentView=true&fqdn=summary-page",
+    "coverage": {
+      "status": "skipped"
+    },
+    "v": 1,
+    "ts": "2026-11-13T12:16:13.752Z"
+  }
+}

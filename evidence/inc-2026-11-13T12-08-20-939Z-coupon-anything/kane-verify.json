@@ -1,0 +1,166 @@
+{
+  "phase": "verify",
+  "at": "2026-11-13T12:10:03.226Z",
+  "exitCode": 1,
+  "status": "failed",
+  "passed": false,
+  "testUrl": "https://test-manager.lambdatest.com/projects/01M730R4QV2KQWHS1GAKND4KMY/test-cases/01M7ACY88KP67R7SB95JNMDNSY/dashboard/share/US_5Z19ESO97WSJQXXLEQ3YAGNXS9EOEZM1S0FASW1PNLKFB65Z8S13FJVBEJAKSKNG?type=summary&agentView=true&fqdn=summary-page",
+  "credits": 24.656909999999996,
+  "runEnd": {
+    "type": "run_end",
+    "status": "failed",
+    "summary": "The checkout did not reject FREESTUFF even though that coupon was not issued. It treated the code as valid, discounted the cart, and completed the purchase.\nMake checkout validate coupons against the issued-coupon list before creating an order. For an unknown coupon such as FREESTUFF, keep the cart unchanged and show a clear coupon error without applying any discount.\nevidence: network_failure: network: POST http://localhost:3100/api/checkout -> 200\nevidence: objective_contradiction: Final verification failed: \"The checkout must be REJECTED with an error and no order confirmation may appear, because FR",
+    "one_liner": "Checkout accepted the unissued FREESTUFF coupon, applied a discount, and created an order instead of showing an error.",
+    "final_state": {},
+    "reason": "Final verification failed: \"The checkout must be REJECTED with an error and no order confirmation may appear, because FREESTUFF is not an issued coupon. If an order is confirmed or a discount is applied, the check fails.\"",
+    "duration": 79.7,
+    "bifurcated": false,
+    "total_runs": 1,
+    "context": {
+      "memory": {
+        "checkout_rejection_error": {
+          "extracted_value": "false",
+          "operator": "equals",
+          "transforms": [],
+          "json_path": null,
+          "reasoning": "value: 'false' -> 'false'; equals 'true' -> FAIL",
+          "analyzer_type": "textual_visual",
+          "step": 9,
+          "query": "whether checkout rejection error is present (in the checkout status message)",
+          "condition": "The checkout is REJECTED with an error because FREESTUFF is not an issued coupon.",
+          "human_description": "Checking for a checkout rejection error",
+          "expected_value": "true",
+          "subject": "checkout rejection error",
+          "must_be": "present",
+          "code_js": "/\\b(rejected|invalid|error)\\b/i.test(el(72).textContent)",
+          "wrapped_js": "(els) => {\n  const __m = {72: 0};\n  const el = (i) => els[__m[i]];\n  const __v = (/\\b(rejected|invalid|error)\\b/i.test(el(72).textContent));\n  return (typeof __v === 'boolean' ? String(__v) : __v);\n}",
+          "locators": [
+            "internal:text=\"Order confirmed: ORD-\"i"
+          ],
+          "needs_unit_conversion": false
+        },
+        "order_confirmation": {
+          "extracted_value": "true",
+          "operator": "equals",
+          "transforms": [],
+          "json_path": null,
+          "reasoning": "value: 'true' -> 'true'; equals 'false' -> FAIL",
+          "analyzer_type": "textual_visual",
+          "step": 9,
+          "query": "whether order confirmation is present (in the checkout status message)",
+          "condition": "No order confirmation may appear.",
+          "human_description": "Checking whether an order confirmation is present",
+          "expected_value": "false",
+          "subject": "order confirmation",
+          "must_be": "absent",
+          "code_js": "/\\bOrder confirmed\\s*:/i.test(el(72).textContent)",
+          "wrapped_js": "(els) => {\n  const __m = {72: 0};\n  const el = (i) => els[__m[i]];\n  const __v = (/\\bOrder confirmed\\s*:/i.test(el(72).textContent));\n  return (typeof __v === 'boolean' ? String(__v) : __v);\n}",
+          "locators": [
+            "internal:text=\"Order confirmed: ORD-\"i"
+          ],
+          "needs_unit_conversion": false
+        },
+        "discount_applied": {
+          "extracted_value": "true",
+          "operator": "equals",
+          "transforms": [],
+          "json_path": null,
+          "reasoning": "value: 'true' -> 'true'; equals 'false' -> FAIL",
+          "analyzer_type": "textual_visual",
+          "step": 9,
+          "query": "whether discount applied is present (in the checkout status message)",
+          "condition": "No discount is applied.",
+          "human_description": "Checking whether a discount is applied",
+          "expected_value": "false",
+          "subject": "discount applied",
+          "must_be": "absent",
+          "code_js": "/\\bdiscount\\s+Rp[\\d,.]+/i.test(el(72).textContent)",
+          "wrapped_js": "(els) => {\n  const __m = {72: 0};\n  const el = (i) => els[__m[i]];\n  const __v = (/\\bdiscount\\s+Rp[\\d,.]+/i.test(el(72).textContent));\n  return (typeof __v === 'boolean' ? String(__v) : __v);\n}",
+          "locators": [
+            "internal:text=\"Order confirmed: ORD-\"i"
+          ],
+          "needs_unit_conversion": false
+        }
+      },
+      "variables": {
+        "checkout_rejection_error": {
+          "syntax": "{{checkout_rejection_error}}",
+          "value": "false",
+          "type": "memory",
+          "secret": false
+        },
+        "order_confirmation": {
+          "syntax": "{{order_confirmation}}",
+          "value": "true",
+          "type": "memory",
+          "secret": false
+        },
+        "discount_applied": {
+          "syntax": "{{discount_applied}}",
+          "value": "true",
+          "type": "memory",
+          "secret": false
+        }
+      },
+      "pointer": "(failed) Checkout accepted the unissued FREESTUFF coupon, applied a discount, and created an order instead of showing an error."
+    },
+    "credits_consumed": 24.656909999999996,
+    "session_dir": "/home/hatch/.testmuai/kaneai/sessions/3fcf43ef-024e-4dfe-b4d9-c462771d1d5e",
+    "run_dir": "/home/hatch/.testmuai/kaneai/sessions/3fcf43ef-024e-4dfe-b4d9-c462771d1d5e/runs/0",
+    "result_code": 740,
+    "reason_code": "assertion_error.confirmed_product_bug",
+    "per_flow_metadata": [
+      {
+        "result_code": "740",
+        "reason_code": "assertion_error.confirmed_product_bug",
+        "error_message": "Final verification failed: \"The checkout must be REJECTED with an error and no order confirmation may appear, because FREESTUFF is not an issued coupon. If an order is confirmed or a discount is applied, the check fails.\"",
+        "summary": "The checkout did not reject FREESTUFF even though that coupon was not issued. It treated the code as valid, discounted the cart, and completed the purchase.\nMake checkout validate coupons against the issued-coupon list before creating an order. For an unknown coupon such as FREESTUFF, keep the cart unchanged and show a clear coupon error without applying any discount.\nevidence: network_failure: network: POST http://localhost:3100/api/checkout -> 200\nevidence: objective_contradiction: Final verification failed: \"The checkout must be REJECTED with an error and no order confirmation may appear, because FR",
+        "one_liner": "Checkout accepted the unissued FREESTUFF coupon, applied a discount, and created an order instead of showing an error.",
+        "credits_consumed": 24.656909999999996
+      }
+    ],
+    "run_id": "run-0",
+    "verdict": {
+      "confirmed": true,
+      "status": "failed",
+      "family": "application_issue",
+      "category": "validation_defect",
+      "category_proposal": "",
+      "severity": "major",
+      "root_cause": "The checkout did not reject FREESTUFF even though that coupon was not issued. It treated the code as valid, discounted the cart, and completed the purchase.",
+      "agent_fault_assessment": "The agent followed the requested flow: it added the first product once, entered the specified name, email, and coupon, then submitted checkout. The completed checkout and discount shown after submission were caused by the product accepting the unissued coupon, not by an incorrect agent action.",
+      "bug_title": "Checkout accepts unissued FREESTUFF coupon",
+      "signals": [
+        {
+          "step": "0-7",
+          "kind": "network_failure",
+          "excerpt": "network: POST http://localhost:3100/api/checkout -> 200"
+        },
+        {
+          "step": "terminal",
+          "kind": "objective_contradiction",
+          "excerpt": "Final verification failed: \"The checkout must be REJECTED with an error and no order confirmation may appear, because FREESTUFF is not an issued coupon. If an order is confirmed or a discount is applied, the check fails.\""
+        }
+      ],
+      "confidence": 0.99,
+      "suggestion": "Make checkout validate coupons against the issued-coupon list before creating an order. For an unknown coupon such as FREESTUFF, keep the cart unchanged and show a clear coupon error without applying any discount.",
+      "one_liner": "Checkout accepted the unissued FREESTUFF coupon, applied a discount, and created an order instead of showing an error.",
+      "relevant_steps": [
+        2,
+        3,
+        6,
+        7,
+        8
+      ],
+      "culprit_step": "0-7",
+      "credits_consumed": 4.8004,
+      "mode": "terminal"
+    },
+    "test_url": "https://test-manager.lambdatest.com/projects/01M730R4QV2KQWHS1GAKND4KMY/test-cases/01M7ACY88KP67R7SB95JNMDNSY/dashboard/share/US_5Z19ESO97WSJQXXLEQ3YAGNXS9EOEZM1S0FASW1PNLKFB65Z8S13FJVBEJAKSKNG?type=summary&agentView=true&fqdn=summary-page",
+    "coverage": {
+      "status": "skipped"
+    },
+    "v": 1,
+    "ts": "2026-11-13T12:09:59.874Z"
+  }
+}

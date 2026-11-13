@@ -1,0 +1,176 @@
+{
+  "phase": "verify",
+  "at": "2026-11-13T12:12:54.320Z",
+  "exitCode": 1,
+  "status": "failed",
+  "passed": false,
+  "testUrl": "https://test-manager.lambdatest.com/projects/01M730R4QV2KQWHS1GAKND4KMY/test-cases/01M7AD3RPQ3WEQH0PRHS6BW4DD/dashboard/share/US_URUNH2ZD4IS3WMZG5EJS9LN38UY89TQXX33XUF0MBIDZ8B8OCAH9OPMXSXQRZM3W?type=summary&agentView=true&fqdn=summary-page",
+  "credits": 23.488838,
+  "runEnd": {
+    "type": "run_end",
+    "status": "failed",
+    "summary": "The test assumes that FREESTUFF is not an issued coupon, but the evidence does not show a checkout error or the final page state. The checkout request returned normally, so the coupon fixture or the test’s expected result needs checking.\nCheck the coupon data configured for this environment and capture the checkout response and resulting page state. If FREESTUFF is deliberately valid, update the test; if it is not issued, add an assertion showing the order confirmation or discount that was observed.",
+    "one_liner": "The run completed the requested checkout actions, but the expected rejection could not be supported by the available evidence.",
+    "final_state": {},
+    "reason": "Final verification failed: \"The checkout must be REJECTED with an error and no order confirmation may appear; an order must not be confirmed and a discount must not be applied.\"",
+    "duration": 70.7,
+    "bifurcated": false,
+    "total_runs": 1,
+    "context": {
+      "memory": {
+        "checkout_rejection_error": {
+          "extracted_value": "false",
+          "operator": "equals",
+          "transforms": [],
+          "json_path": null,
+          "reasoning": "value: 'false' -> 'false'; equals 'true' -> FAIL",
+          "analyzer_type": "visual",
+          "step": 8,
+          "query": "whether checkout rejection error is present (in the checkout area)",
+          "condition": "The checkout is REJECTED with an error.",
+          "human_description": "Checking whether a checkout rejection error is present",
+          "expected_value": "true",
+          "subject": "checkout rejection error",
+          "must_be": "present"
+        },
+        "order_confirmation": {
+          "extracted_value": "true",
+          "operator": "equals",
+          "transforms": [],
+          "json_path": null,
+          "reasoning": "value: 'true' -> 'true'; equals 'false' -> FAIL",
+          "analyzer_type": "textual_visual",
+          "step": 8,
+          "query": "whether order confirmation is present (in the checkout status)",
+          "condition": "No order confirmation may appear.",
+          "human_description": "Checking whether an order confirmation is present",
+          "expected_value": "false",
+          "subject": "order confirmation",
+          "must_be": "absent",
+          "code_js": "el(72).textContent.includes('Order confirmed:')",
+          "wrapped_js": "(els) => {\n  const __m = {72: 0};\n  const el = (i) => els[__m[i]];\n  const __v = (el(72).textContent.includes('Order confirmed:'));\n  return (typeof __v === 'boolean' ? String(__v) : __v);\n}",
+          "locators": [
+            "internal:text=\"Order confirmed: ORD-\"i"
+          ],
+          "needs_unit_conversion": false
+        },
+        "order_confirmed": {
+          "extracted_value": "true",
+          "operator": "equals",
+          "transforms": [],
+          "json_path": null,
+          "reasoning": "value: 'true' -> 'true'; equals 'false' -> FAIL",
+          "analyzer_type": "textual_visual",
+          "step": 8,
+          "query": "whether order confirmed is present (in the checkout status)",
+          "condition": "An order is not confirmed.",
+          "human_description": "Checking whether an order confirmed status is present",
+          "expected_value": "false",
+          "subject": "order confirmed",
+          "must_be": "absent",
+          "code_js": "el(72).textContent.includes('Order confirmed:')",
+          "wrapped_js": "(els) => {\n  const __m = {72: 0};\n  const el = (i) => els[__m[i]];\n  const __v = (el(72).textContent.includes('Order confirmed:'));\n  return (typeof __v === 'boolean' ? String(__v) : __v);\n}",
+          "locators": [
+            "internal:text=\"Order confirmed: ORD-\"i"
+          ],
+          "needs_unit_conversion": false
+        },
+        "discount_applied": {
+          "extracted_value": "true",
+          "operator": "equals",
+          "transforms": [],
+          "json_path": null,
+          "reasoning": "value: 'true' -> 'true'; equals 'false' -> FAIL",
+          "analyzer_type": "textual_visual",
+          "step": 8,
+          "query": "whether discount applied is present (in the checkout status)",
+          "condition": "A discount is not applied.",
+          "human_description": "Checking whether a discount applied status is present",
+          "expected_value": "false",
+          "subject": "discount applied",
+          "must_be": "absent",
+          "code_js": "/discount\\s+Rp[\\d,.]+/i.test(el(72).textContent)",
+          "wrapped_js": "(els) => {\n  const __m = {72: 0};\n  const el = (i) => els[__m[i]];\n  const __v = (/discount\\s+Rp[\\d,.]+/i.test(el(72).textContent));\n  return (typeof __v === 'boolean' ? String(__v) : __v);\n}",
+          "locators": [
+            "internal:text=\"Order confirmed: ORD-\"i"
+          ],
+          "needs_unit_conversion": false
+        }
+      },
+      "variables": {
+        "checkout_rejection_error": {
+          "syntax": "{{checkout_rejection_error}}",
+          "value": "false",
+          "type": "memory",
+          "secret": false
+        },
+        "order_confirmation": {
+          "syntax": "{{order_confirmation}}",
+          "value": "true",
+          "type": "memory",
+          "secret": false
+        },
+        "order_confirmed": {
+          "syntax": "{{order_confirmed}}",
+          "value": "true",
+          "type": "memory",
+          "secret": false
+        },
+        "discount_applied": {
+          "syntax": "{{discount_applied}}",
+          "value": "true",
+          "type": "memory",
+          "secret": false
+        }
+      },
+      "pointer": "(failed) The run completed the requested checkout actions, but the expected rejection could not be supported by the available evidence."
+    },
+    "credits_consumed": 23.488838,
+    "session_dir": "/home/hatch/.testmuai/kaneai/sessions/1d5ecd42-0c90-4563-909a-56a3b1f52d9a",
+    "run_dir": "/home/hatch/.testmuai/kaneai/sessions/1d5ecd42-0c90-4563-909a-56a3b1f52d9a/runs/0",
+    "result_code": 710,
+    "reason_code": "assertion_error.final_verification",
+    "per_flow_metadata": [
+      {
+        "result_code": "710",
+        "reason_code": "assertion_error.final_verification",
+        "error_message": "Final verification failed: \"The checkout must be REJECTED with an error and no order confirmation may appear; an order must not be confirmed and a discount must not be applied.\"",
+        "summary": "The test assumes that FREESTUFF is not an issued coupon, but the evidence does not show a checkout error or the final page state. The checkout request returned normally, so the coupon fixture or the test’s expected result needs checking.\nCheck the coupon data configured for this environment and capture the checkout response and resulting page state. If FREESTUFF is deliberately valid, update the test; if it is not issued, add an assertion showing the order confirmation or discount that was observed.",
+        "one_liner": "The run completed the requested checkout actions, but the expected rejection could not be supported by the available evidence.",
+        "credits_consumed": 23.488838
+      }
+    ],
+    "run_id": "run-0",
+    "verdict": {
+      "confirmed": false,
+      "status": "broken",
+      "family": "automation_bug",
+      "category": "test_data_issue",
+      "category_proposal": "",
+      "severity": "minor",
+      "root_cause": "The test assumes that FREESTUFF is not an issued coupon, but the evidence does not show a checkout error or the final page state. The checkout request returned normally, so the coupon fixture or the test’s expected result needs checking.",
+      "agent_fault_assessment": "The agent followed the specified flow: it added the first item once, entered Kane Check, kane@example.com, and FREESTUFF in the labeled checkout fields, then clicked Place order. There is no evidence that it selected a wrong control, entered a different value, or submitted too early.",
+      "bug_title": "Coupon validity expectation does not match test data",
+      "signals": [],
+      "confidence": 0.7,
+      "suggestion": "Check the coupon data configured for this environment and capture the checkout response and resulting page state. If FREESTUFF is deliberately valid, update the test; if it is not issued, add an assertion showing the order confirmation or discount that was observed.",
+      "one_liner": "The run completed the requested checkout actions, but the expected rejection could not be supported by the available evidence.",
+      "relevant_steps": [
+        0,
+        4,
+        5,
+        6,
+        7
+      ],
+      "culprit_step": "0-7",
+      "credits_consumed": 4.7421,
+      "mode": "terminal"
+    },
+    "test_url": "https://test-manager.lambdatest.com/projects/01M730R4QV2KQWHS1GAKND4KMY/test-cases/01M7AD3RPQ3WEQH0PRHS6BW4DD/dashboard/share/US_URUNH2ZD4IS3WMZG5EJS9LN38UY89TQXX33XUF0MBIDZ8B8OCAH9OPMXSXQRZM3W?type=summary&agentView=true&fqdn=summary-page",
+    "coverage": {
+      "status": "skipped"
+    },
+    "v": 1,
+    "ts": "2026-11-13T12:12:52.632Z"
+  }
+}

@@ -1,0 +1,144 @@
+{
+  "phase": "reverify-1",
+  "at": "2026-11-13T12:14:54.473Z",
+  "exitCode": 0,
+  "status": "passed",
+  "passed": true,
+  "testUrl": "https://test-manager.lambdatest.com/projects/01M730R4QV2KQWHS1GAKND4KMY/test-cases/01M7AD6NNXAHYEF4J2N7P3JBKK/dashboard/share/US_IC9UAQ8O3H0PD96B62ITQRLHXNAEOTA4LJK2NQE17EC4F5F9DDSVHBW85MWR7P4F?type=summary&agentView=true&fqdn=summary-page",
+  "credits": 16.520860000000003,
+  "runEnd": {
+    "type": "run_end",
+    "status": "passed",
+    "summary": "Opened the LoopMune store and added the first product to the cart once.\nEntered Kane Check, kane@example.com, and the FREESTUFF coupon in the checkout form, then submitted the checkout.\nThe checkout was rejected with an invalid-coupon error. No discount was applied and no order confirmation appeared.",
+    "one_liner": "submitted a checkout with an invalid coupon on the LoopMune store",
+    "final_state": {
+      "url": "http://localhost:3100/",
+      "checkout_rejection_error": "true",
+      "discount_applied": "false",
+      "order_confirmation": "false"
+    },
+    "reason": "Objective completed",
+    "duration": 90,
+    "bifurcated": false,
+    "total_runs": 1,
+    "context": {
+      "memory": {
+        "checkout_rejection_error": {
+          "extracted_value": "true",
+          "operator": "equals",
+          "transforms": [],
+          "json_path": null,
+          "reasoning": "value: 'true' -> 'true'; equals 'true' -> PASS",
+          "analyzer_type": "textual_visual",
+          "step": 10,
+          "query": "whether checkout rejection error is present (in the checkout form)",
+          "condition": "The checkout is rejected with an error.",
+          "human_description": "Checking whether a checkout rejection error is present",
+          "expected_value": "true",
+          "subject": "checkout rejection error",
+          "must_be": "present",
+          "code_js": "el(75).textContent.trim().length > 0",
+          "wrapped_js": "(els) => {\n  const __m = {75: 0};\n  const el = (i) => els[__m[i]];\n  const __v = (el(75).textContent.trim().length > 0);\n  return (typeof __v === 'boolean' ? String(__v) : __v);\n}",
+          "locators": [
+            "internal:text=\"Checkout error: invalid\"i"
+          ],
+          "needs_unit_conversion": false
+        },
+        "order_confirmation": {
+          "extracted_value": "false",
+          "operator": "equals",
+          "transforms": [],
+          "json_path": null,
+          "reasoning": "value: 'false' -> 'false'; equals 'false' -> PASS",
+          "analyzer_type": "visual",
+          "step": 10,
+          "query": "whether order confirmation is present (in the checkout and orders area)",
+          "condition": "No order confirmation appears.",
+          "human_description": "Checking whether an order confirmation is present",
+          "expected_value": "false",
+          "subject": "order confirmation",
+          "must_be": "absent"
+        },
+        "order_confirmed": {
+          "extracted_value": "false",
+          "operator": "equals",
+          "transforms": [],
+          "json_path": null,
+          "reasoning": "value: 'false' -> 'false'; equals 'true' -> FAIL",
+          "analyzer_type": "visual",
+          "step": 10,
+          "query": "whether order confirmation is present (in the checkout and orders area)",
+          "condition": "An order is confirmed.",
+          "human_description": "Checking whether an order confirmation is present",
+          "expected_value": "true",
+          "subject": "order confirmation",
+          "must_be": "present"
+        },
+        "discount_applied": {
+          "extracted_value": "false",
+          "operator": "equals",
+          "transforms": [],
+          "json_path": null,
+          "reasoning": "value: 'false' -> 'false'; equals 'true' -> FAIL",
+          "analyzer_type": "visual",
+          "step": 10,
+          "query": "whether discount applied is present (in the cart and checkout area)",
+          "condition": "A discount is applied.",
+          "human_description": "Checking whether a discount applied is present",
+          "expected_value": "true",
+          "subject": "discount applied",
+          "must_be": "present"
+        }
+      },
+      "variables": {
+        "checkout_rejection_error": {
+          "syntax": "{{checkout_rejection_error}}",
+          "value": "true",
+          "type": "memory",
+          "secret": false
+        },
+        "order_confirmation": {
+          "syntax": "{{order_confirmation}}",
+          "value": "false",
+          "type": "memory",
+          "secret": false
+        },
+        "order_confirmed": {
+          "syntax": "{{order_confirmed}}",
+          "value": "false",
+          "type": "memory",
+          "secret": false
+        },
+        "discount_applied": {
+          "syntax": "{{discount_applied}}",
+          "value": "false",
+          "type": "memory",
+          "secret": false
+        }
+      },
+      "pointer": "(passed) submitted a checkout with an invalid coupon on the LoopMune store"
+    },
+    "credits_consumed": 16.520860000000003,
+    "session_dir": "/home/hatch/.testmuai/kaneai/sessions/06a5d883-a003-4c62-952d-69af97e90c66",
+    "run_dir": "/home/hatch/.testmuai/kaneai/sessions/06a5d883-a003-4c62-952d-69af97e90c66/runs/0",
+    "result_code": 100,
+    "reason_code": "success.complete",
+    "per_flow_metadata": [
+      {
+        "result_code": "100",
+        "reason_code": "success.complete",
+        "error_message": null,
+        "summary": "Opened the LoopMune store and added the first product to the cart once.\nEntered Kane Check, kane@example.com, and the FREESTUFF coupon in the checkout form, then submitted the checkout.\nThe checkout was rejected with an invalid-coupon error. No discount was applied and no order confirmation appeared.",
+        "one_liner": "submitted a checkout with an invalid coupon on the LoopMune store",
+        "credits_consumed": 16.520860000000003
+      }
+    ],
+    "run_id": "run-0",
+    "test_url": "https://test-manager.lambdatest.com/projects/01M730R4QV2KQWHS1GAKND4KMY/test-cases/01M7AD6NNXAHYEF4J2N7P3JBKK/dashboard/share/US_IC9UAQ8O3H0PD96B62ITQRLHXNAEOTA4LJK2NQE17EC4F5F9DDSVHBW85MWR7P4F?type=summary&agentView=true&fqdn=summary-page",
+    "coverage": {
+      "status": "skipped"
+    },
+    "v": 1,
+    "ts": "2026-11-13T12:14:52.914Z"
+  }
+}
