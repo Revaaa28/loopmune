@@ -11,7 +11,7 @@ export KANE_CLI_CHROME_PATH=/home/hatch/.cache/ms-playwright/chromium-1254/chrom
 export NO_PROXY=localhost,127.0.0.1
 export no_proxy=localhost,127.0.0.1
 kane-cli run --agent --headless --url http://localhost:3100 \
-  "Open the LoopMune store. The first product is 'Antibody Tee — Navy' at Rp189,000. Click its 'Add to cart' button two times. Check that the cart total reads Rp378,000 — exactly twice the unit price. If it reads Rp189,000 or any other amount, the check fails."
+  "Open the LoopMune store. The first product is 'Antibody Tee — Navy' at $24.99. Click its 'Add to cart' button two times. Check that the cart total reads $49.98 — exactly twice the unit price. If it reads $24.99 or any other amount, the check fails."
 ```
 
 ## Expected
