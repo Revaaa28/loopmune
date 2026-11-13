@@ -112,7 +112,7 @@ function renderOrders(orders) {
   $('#orders-empty').style.display = orders.length === 0 ? '' : 'none';
   $('#orders-list').innerHTML = orders.map((o) => `
     <li class="lm-order">
-      <strong>${esc(o.id)}</strong> — ${o.items} item(s), charged ${usd(o.charged)}
+      <strong>${esc(o.id)}</strong> — ${o.items} item(s), demo total ${usd(o.charged)}
       ${o.discount ? `(saved ${usd(o.discount)})` : ''} · ${esc(o.name)}
     </li>`).join('');
 }
@@ -138,10 +138,10 @@ $('#checkout-form').addEventListener('submit', async (e) => {
       name: form.get('name'), email: form.get('email'), coupon: form.get('coupon') || '',
     });
     if (ok && data.order) {
-      out.textContent = `Order confirmed: ${data.order.id} — ${data.order.items} item(s), ` +
+      out.textContent = `Demo order placed: ${data.order.id} — ${data.order.items} item(s), ` +
         `total ${usd(data.order.total)}` +
         (data.order.discount ? `, discount ${usd(data.order.discount)}` : '') +
-        `, charged ${usd(data.order.charged)}. (Demo store — no payment was taken.)`;
+        `, final ${usd(data.order.charged)}. Nothing was charged and nothing will be shipped — this is a demo store.`;
       e.target.reset();
       const cart = await api('/api/cart');
       renderCart(cart.data);
