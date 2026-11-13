@@ -1,8 +1,8 @@
 # LoopMune — a store with an immune system
 
-<!-- SCREENSHOTS: TODO — added in the design phase (Patient Monitor skin).
-     Planned shots: (1) storefront, (2) immune log "right now" block during
-     a live heal, (3) a healed incident's trace with Kane evidence open. -->
+![The Patient Monitor dashboard: state word STABLE, the immune trace with red spikes where Kane confirmed breaks, and the vitals](screenshots/monitor.png)
+
+![The LoopMune store — the Patient](screenshots/store.png)
 
 LoopMune is a small, real merch store that can catch its own bugs and fix
 them — with proof. Three actors run the loop:
@@ -30,8 +30,13 @@ npm start          # zero dependencies — plain Node.js, nothing to install
 ```
 
 Open http://localhost:3000 — the store. Browse, search, fill a cart,
-check out (coupon `LOOP10` takes 10% off). Then open the **Immune Log**
-at http://localhost:3000/log.html to see the recorded immune cycles.
+check out (coupon `LOOP10` takes 10% off). Then open the **Patient
+Monitor** at http://localhost:3000/log.html: one big state word, the
+immune trace drawn from the recorded cases, the vitals, and every case
+told step by step with its Kane evidence. From that page you can also
+**break the shop on purpose** — pick a catalog fault, inject it for
+real, and watch the loop close live (one cycle at a time; needs the
+Kane CLI and Healer access on the machine serving the page).
 
 **No account is needed.** The store's primary flow has no login wall. The
 sign-in form is a demo surface: it accepts any email with any non-empty
@@ -50,7 +55,7 @@ npm run drill -- total-ignores-qty  # inject a break -> Kane proves it ->
                                     # the Healer patches -> Kane re-verifies
 npm run watch                       # save-hook mode: edit any file in
                                     # patient/ and the loop reacts on save
-npm test                            # 19 deterministic tests, no credits used
+npm test                            # 27 deterministic tests, no credits used
 ```
 
 In save-hook mode the causality is the point: **save a file → Kane runs →
@@ -67,7 +72,11 @@ output, the parsed verdict, and the exact patch files the Healer wrote —
 is stored in this repo under `evidence/<incident-id>/`, with the incident
 history in `data/immune-log.jsonl`. The dashboard serves all of it with
 no live Kane or LLM call, so judges can replay complete cycles from the
-stored evidence alone.
+stored evidence alone. On a hosted copy without Kane CLI / Healer access
+(for example the Render deploy from `render.yaml`), the "break it
+yourself" button detects that and refuses honestly with the reason,
+instead of recording a misleading failure — the recorded cases remain
+the demonstration.
 
 ## The attack catalog
 
@@ -91,8 +100,9 @@ legitimately rewords an error message cannot break re-injection.
 server.js          Patient storefront + dashboard server (zero-dependency)
 patient/           the store's business rules — the code that gets broken & healed
   catalog.js  cart.js  checkout.js  auth.js  errors.js
-public/            storefront and Immune Log dashboard (semantic HTML,
-                   stable lm-* class hooks; skin applied in the design phase)
+public/            storefront + the Patient Monitor dashboard (direction C
+                   skin in monitor.css; trace.js builds the immune trace
+                   from the recorded incidents, client-side)
 lib/
   kane.js          the Kane Gate: runs one authored test, parses run_end NDJSON
   attacks.js       the catalog: mutation anchors + authored Kane prompts
@@ -101,11 +111,15 @@ lib/
                    full rollback on any failure
   cycle.js         the immune state machine (inject -> verify -> heal -> verify)
   immune-log.js    append-only JSONL incident store (snapshot folding)
+  breaker.js       the dashboard's break-it control: one guarded live
+                   cycle (orchestrator child), availability-gated
 orchestrator.js    baseline / drill / watch modes; manages the Patient process
 kane/              the authored Kane tests, one file per check, with commands
 tests/             stubbed-engine + API contract suites (no credits, no network)
 data/              immune-log.jsonl — every recorded cycle
 evidence/          per-incident Kane output (NDJSON + verdict) and Healer patches
+render.yaml        Render blueprint (free web service, npm start)
+screenshots/       the dashboard and storefront, as rendered
 ```
 
 ### Two bugs this project found in itself
@@ -132,8 +146,18 @@ payloads. The failed incidents are still in the log (`failed`, trigger
   the dashboard's immune trace plots.
 - `GET /api/summary` → aggregate vitals computed from the stored log:
   `counts` by outcome (incl. `active` = currently running), the freshest
-  `lastKaneVerdict`, `lastIncidentAt`, `secondsSinceLastIncident`, and
-  `totalKaneCredits`. No live service calls.
+  `lastKaneVerdict`, `lastIncidentAt`, `secondsSinceLastIncident`,
+  `totalKaneCredits`, `totalKaneRuns`, `breaksConfirmed` (incidents with
+  a confirmed infection), `healRate`, `meanHealSeconds`, and the
+  `watchList` (each browser-verifiable catalog break with its newest
+  recorded outcome). No live service calls.
+- `GET /api/break/status` → the break-it control's state: whether a
+  cycle is running, whether live cycles are available on this server,
+  and the plain-language reason when they are not.
+- `POST /api/break` `{ attackId }` → starts ONE real catalog cycle via
+  the orchestrator (202), or refuses: 400 unknown / browser-less break,
+  409 a cycle is already running, 503 live cycles unavailable here
+  (no Kane CLI or no Healer access — e.g. a hosted copy).
 - `GET /evidence/<incident-id>/<file>` serves the recorded Kane output
   and Healer patches.
 - Store API: `GET /api/products?q=&category=`, `GET /api/cart`,

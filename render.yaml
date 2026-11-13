@@ -1,0 +1,25 @@
+# LoopMune — Render blueprint.
+# Zero-dependency Node web service: no build step beyond npm install
+# (which is a no-op — there are no dependencies), started with npm start.
+# Render injects PORT; server.js already honours it.
+#
+# Notes for the deploy step (creating the service is a manual action):
+# - Free tier sleeps when idle; the first hit after sleep is slow, then
+#   the dashboard and store respond normally. The demo video and the
+#   recorded evidence do not depend on the service being awake.
+# - The filesystem is ephemeral: the committed immune log + evidence in
+#   this repo are what the hosted copy serves. Cycles started from the
+#   dashboard on a hosted copy are refused honestly (no Kane CLI / no
+#   Healer access there — see /api/break/status) rather than recorded
+#   as fake failures, and any runtime writes vanish on redeploy.
+services:
+  - type: web
+    name: loopmune
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /
+    envVars:
+      - key: NODE_ENV
+        value: production
