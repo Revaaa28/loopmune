@@ -68,7 +68,10 @@ Kane runs consumed so far are recorded in the log with their evidence links.
   76.33 credits (balance 11,177.45 → 11,101.12).
 - [x] M1 attack catalog + Kane Gate + M2 heal loop (orchestrator) — pulled
   forward from the Nov 14–15 plan.
-- [ ] Remaining catalog drills (coupon / empty-cart / login) rehearsed live
+- [x] **All remaining catalog drills HEALED live (Nov 13)** — `coupon-anything`,
+  `empty-cart-checkout`, `login-empty-password`: each Kane verify exit 1
+  (infection confirmed) → M2 patch → Kane re-verify exit 0 on attempt 1.
+  Day-2 Kane spend: 128.05 credits (cumulative 204.38; balance ≈ 10,973).
 - [ ] Public deploy (Render) + dashboard polish (Nov 16)
 - [ ] Full live run recorded (Nov 17)
 - [ ] Demo video + submission (Nov 18, internal deadline)
