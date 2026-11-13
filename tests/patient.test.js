@@ -48,9 +48,9 @@ test('cart total is price x quantity and set() adjusts lines', async () => {
   await post('/api/cart/add', { id: 'p1', qty: 2 });
   let cart = await (await fetch(`${BASE}/api/cart`)).json();
   assert.equal(cart.count, 2);
-  assert.equal(cart.total, 189000 * 2);
+  assert.equal(cart.total, 2499 * 2);
   cart = await (await post('/api/cart/set', { id: 'p1', qty: 1 })).json();
-  assert.equal(cart.total, 189000);
+  assert.equal(cart.total, 2499);
   cart = await (await post('/api/cart/set', { id: 'p1', qty: 0 })).json();
   assert.equal(cart.count, 0);
 });
@@ -71,9 +71,11 @@ test('checkout: empty cart rejected, unknown coupon rejected, LOOP10 math exact'
   const ok = await post('/api/checkout', { name: 'Test Person', email: 't@example.com', coupon: 'LOOP10' });
   assert.equal(ok.status, 200);
   const { order } = await ok.json();
-  assert.equal(order.total, 50000);
-  assert.equal(order.discount, 5000);
-  assert.equal(order.charged, 45000);
+  // 2 x Loop Sticker Pack at $4.99 = 998 cents; LOOP10 takes exactly
+  // 10% (99.8 rounds half up to 100); charged 898.
+  assert.equal(order.total, 998);
+  assert.equal(order.discount, 100);
+  assert.equal(order.charged, 898);
 
   const orders = await (await fetch(`${BASE}/api/orders`)).json();
   assert.equal(orders.orders.length, 1);

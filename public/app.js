@@ -2,7 +2,14 @@
 // All money math and validation happen on the server; this file renders
 // every state honestly: loading, empty, error (with retry), and success.
 
-const rp = (n) => 'Rp' + Number(n).toLocaleString('en-US');
+// Money arrives from the server as integer cents; format to $X.XX with
+// integer arithmetic only (no float ever touches a money value).
+const usd = (cents) => {
+  const n = Math.trunc(Number(cents));
+  const sign = n < 0 ? '-' : '';
+  const abs = Math.abs(n);
+  return `${sign}$${Math.floor(abs / 100)}.${String(abs % 100).padStart(2, '0')}`;
+};
 const $ = (sel) => document.querySelector(sel);
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
@@ -42,7 +49,7 @@ async function loadProducts() {
   grid.innerHTML = products.map((p) => `
     <article class="lm-product" data-id="${p.id}">
       <h3 class="lm-product-name">${esc(p.name)}</h3>
-      <p class="lm-product-price">${rp(p.price)}</p>
+      <p class="lm-product-price">${usd(p.price)}</p>
       <p class="lm-product-stock">${p.stock > 0 ? `In stock: ${p.stock}` : 'Sold out'}</p>
       <button class="lm-button lm-add" data-add="${p.id}" ${p.stock > 0 ? '' : 'disabled'}>Add to cart</button>
     </article>`).join('');
@@ -67,11 +74,11 @@ $('#filter-category').addEventListener('change', loadProducts);
 // --- cart -----------------------------------------------------------------
 function renderCart(snapshot) {
   $('#cart-count').textContent = snapshot.count;
-  $('#cart-total').textContent = rp(snapshot.total);
+  $('#cart-total').textContent = usd(snapshot.total);
   $('#cart-empty').style.display = snapshot.items.length === 0 ? '' : 'none';
   $('#cart-lines').innerHTML = snapshot.items.map((i) => `
     <li class="lm-cart-line">
-      <span class="lm-cart-line-name">${esc(i.name)} — ${rp(i.lineTotal)}</span>
+      <span class="lm-cart-line-name">${esc(i.name)} — ${usd(i.lineTotal)}</span>
       <span class="lm-qty">
         <button type="button" data-dec="${i.id}" aria-label="Decrease quantity">−</button>
         <span class="lm-qty-value">${i.qty}</span>
@@ -105,8 +112,8 @@ function renderOrders(orders) {
   $('#orders-empty').style.display = orders.length === 0 ? '' : 'none';
   $('#orders-list').innerHTML = orders.map((o) => `
     <li class="lm-order">
-      <strong>${esc(o.id)}</strong> — ${o.items} item(s), charged ${rp(o.charged)}
-      ${o.discount ? `(saved ${rp(o.discount)})` : ''} · ${esc(o.name)}
+      <strong>${esc(o.id)}</strong> — ${o.items} item(s), charged ${usd(o.charged)}
+      ${o.discount ? `(saved ${usd(o.discount)})` : ''} · ${esc(o.name)}
     </li>`).join('');
 }
 
@@ -132,9 +139,9 @@ $('#checkout-form').addEventListener('submit', async (e) => {
     });
     if (ok && data.order) {
       out.textContent = `Order confirmed: ${data.order.id} — ${data.order.items} item(s), ` +
-        `total ${rp(data.order.total)}` +
-        (data.order.discount ? `, discount ${rp(data.order.discount)}` : '') +
-        `, charged ${rp(data.order.charged)}. (Demo store — no payment was taken.)`;
+        `total ${usd(data.order.total)}` +
+        (data.order.discount ? `, discount ${usd(data.order.discount)}` : '') +
+        `, charged ${usd(data.order.charged)}. (Demo store — no payment was taken.)`;
       e.target.reset();
       const cart = await api('/api/cart');
       renderCart(cart.data);
