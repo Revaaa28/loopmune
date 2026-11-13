@@ -1,83 +1,146 @@
-# LoopMune — Every heal, proven.
+# LoopMune — a store with an immune system
 
-A live web app with an immune system, built for the **Kane CLI Online Hackathon
-(TestMu AI), Nov 12–19 2026**.
+<!-- SCREENSHOTS: TODO — added in the design phase (Patient Monitor skin).
+     Planned shots: (1) storefront, (2) immune log "right now" block during
+     a live heal, (3) a healed incident's trace with Kane evidence open. -->
 
-- **The Patient** — a small but real storefront: products + cart + checkout,
-  login, search/filter, settings. Its totals are computed by deterministic code.
-- **M1, the Breaker** — attacks the Patient from a catalog of known fault classes.
-- **Kane CLI, the arbiter** — the *only* accepted proof that a break is real.
-  Exit 0 = attack repelled. Exit 1 = infection confirmed, with evidence.
-- **M2, the Healer** — patches a confirmed infection, redeploys, Kane re-verifies
-  until green (retry cap 3, then the incident is marked chronic).
-- **The Immune Log** — every attack → Kane verdict + evidence → patch →
-  re-verification, published live at `/log.html`.
+LoopMune is a small, real merch store that can catch its own bugs and fix
+them — with proof. Three actors run the loop:
 
-## Run it
+- **The Breaker** breaks the store on purpose: a safety check removed
+  here, a wrong total there — the way a careless edit or an attacker would.
+- **Kane CLI — the Checker** opens the store in a real browser and uses it
+  like a customer. Only Kane's verdict counts. If Kane says the store
+  works, the break was not real.
+- **The Healer** is an AI agent (Gemini). It reads Kane's failure report —
+  bug title, summary, evidence signals — plus the broken source code,
+  works out what is wrong, and rewrites the code. Then Kane checks again.
 
-```bash
-npm start        # Patient on http://localhost:3000
-npm test         # deterministic engine + API smoke tests (no Kane credits)
-```
+There is **no scripted fallback**: the Healer gets no answer key and no
+patch table. If it cannot fix the code within three attempts, the incident
+is recorded as *failed*, honestly. You can watch every round — attack,
+verdict, patch, re-check — on the public **Immune Log** dashboard.
 
-## Drill mode (fault injection)
+Built for the Kane CLI Online Hackathon (TestMu AI), Nov 12–19 2026.
 
-Faults are OFF by default — the baseline is healthy. Inject one to rehearse a full
-attack → proof → heal → proof cycle:
-
-```bash
-LOOPMUNE_FAULTS=total-ignores-qty node server.js
-# or live: POST /api/faults { "fault": "total-ignores-qty", "on": true }
-```
-
-Known faults: `total-ignores-qty`, `negative-qty`, `coupon-anything`,
-`empty-cart-checkout`, `login-empty-password`.
-
-## Kane smoke test
-
-See `kane/smoke-test.md`. One command, ~20 credits, exit 0 on a healthy baseline.
-
-## Judging
-
-Ships / Verified / Closed loop / Craft, equal weight. Kane is not a final test step
-here — it is an organ of the system: nothing is a bug until Kane says so.
-
-## The loop (orchestrator)
+## See it in under 30 seconds
 
 ```bash
-npm run baseline   # Kane smoke vs a healthy Patient — expect exit 0 (green)
-npm run drill      # full cycle: M1 injects total-ignores-qty → Kane proves it
-                   # (exit 1, evidence) → M2 patches → Kane re-verifies (exit 0)
-node orchestrator.js --drill coupon-anything   # any Kane-verified attack
+npm start          # zero dependencies — plain Node.js, nothing to install
 ```
 
-The orchestrator spawns its own Patient on port 3100 and publishes every
-transition to the immune log (`/log.html`, persisted to `data/log.json`).
-Kane runs consumed so far are recorded in the log with their evidence links.
+Open http://localhost:3000 — the store. Browse, search, fill a cart,
+check out (coupon `LOOP10` takes 10% off). Then open the **Immune Log**
+at http://localhost:3000/log.html to see the recorded immune cycles.
 
-## Status — Day 1 (Nov 12, 2026)
+**No account is needed.** The store's primary flow has no login wall. The
+sign-in form is a demo surface: it accepts any email with any non-empty
+password (and its one hard rule — an empty password is always rejected —
+is one of the things Kane patrols).
 
-- [x] Public repo initialized 2026-11-12 — https://github.com/Revaaa28/loopmune
-- [x] Patient app + vitals + fault-injection toggles (5 catalog faults)
-- [x] Deterministic tests 9/9 (`npm test`, no Kane credits)
-- [x] **Kane baseline GREEN against this code** — exit 0, status passed,
-  30.97 credits, ShareLink evidence in the immune log.
-- [x] **Full drill cycle HEALED end-to-end** — attack `total-ignores-qty`:
-  Kane verify exit 1 (infection confirmed, 16.37 credits, evidence) → M2
-  patch → Kane re-verify exit 0 (17.20 credits). Total Day-1 Kane spend:
-  76.33 credits (balance 11,177.45 → 11,101.12).
-- [x] M1 attack catalog + Kane Gate + M2 heal loop (orchestrator) — pulled
-  forward from the Nov 14–15 plan.
-- [x] **All remaining catalog drills HEALED live (Nov 13)** — `coupon-anything`,
-  `empty-cart-checkout`, `login-empty-password`: each Kane verify exit 1
-  (infection confirmed) → M2 patch → Kane re-verify exit 0 on attempt 1.
-  Day-2 Kane spend: 128.05 credits (cumulative 204.38; balance ≈ 10,973).
-- [ ] Public deploy (Render) + dashboard polish (Nov 16)
-- [ ] Full live run recorded (Nov 17)
-- [ ] Demo video + submission (Nov 18, internal deadline)
+## Run the loop yourself
 
-Day-1 lesson, recorded honestly: the first baseline attempt died with Kane
-exit 2 (`Invalid port: ':1]'`) before any step — the VM exports *both*
-`NO_PROXY` and lowercase `no_proxy` with bracketed IPv6 entries, and Kane's
-proxy parser chokes on them. `lib/kane.js` now sanitizes both. The failed
-attempt is visible in the immune log; the log does not hide its own history.
+Live cycles need a Kane CLI account (sign up at testmuai.com, claim the
+free credits, `npm install -g @testmuai/kane-cli`, sign in) and, for the
+Healer, Gemini access. Everything else is in this repo.
+
+```bash
+npm run baseline                    # Kane smoke check vs the healthy store
+npm run drill -- total-ignores-qty  # inject a break -> Kane proves it ->
+                                    # the Healer patches -> Kane re-verifies
+npm run watch                       # save-hook mode: edit any file in
+                                    # patient/ and the loop reacts on save
+npm test                            # 19 deterministic tests, no credits used
+```
+
+In save-hook mode the causality is the point: **save a file → Kane runs →
+if it fails, the Healer reads the failure and edits the code → Kane runs
+again → green.** A full timestamped recording of exactly that chain is in
+the Immune Log (incident `inc-2026-11-13T12-11-21-275Z-coupon-anything`,
+trigger: `hook`, outcome: healed).
+
+## If a third-party service is down (the fallback)
+
+The Healer depends on Gemini and verification depends on Kane's cloud.
+The *record* of the loop does not: every incident — Kane's raw NDJSON
+output, the parsed verdict, and the exact patch files the Healer wrote —
+is stored in this repo under `evidence/<incident-id>/`, with the incident
+history in `data/immune-log.jsonl`. The dashboard serves all of it with
+no live Kane or LLM call, so judges can replay complete cycles from the
+stored evidence alone.
+
+## The attack catalog
+
+| Attack | Surface | What breaks |
+|---|---|---|
+| `total-ignores-qty` | cart totals | Total charges the unit price once, ignoring quantity |
+| `coupon-anything` | checkout coupon | Any invented coupon code takes 50% off |
+| `empty-cart-checkout` | checkout | An order is created with an empty cart |
+| `login-empty-password` | sign in | Sign-in succeeds with an empty password |
+| `negative-qty` | cart API | A negative quantity slips past the cart endpoint (API-probed; covered by the deterministic test suite — no UI quantity path exists for a browser test to exercise) |
+
+Attacks are **real source mutations** in the Patient's logic modules
+(`patient/cart.js`, `patient/checkout.js`, `patient/auth.js`), not runtime
+flags — healing therefore means editing real code. Mutation anchors are
+single structural lines and never contain prose, so a Healer that
+legitimately rewords an error message cannot break re-injection.
+
+## How it is built
+
+```
+server.js          Patient storefront + dashboard server (zero-dependency)
+patient/           the store's business rules — the code that gets broken & healed
+  catalog.js  cart.js  checkout.js  auth.js  errors.js
+public/            storefront and Immune Log dashboard (semantic HTML,
+                   stable lm-* class hooks; skin applied in the design phase)
+lib/
+  kane.js          the Kane Gate: runs one authored test, parses run_end NDJSON
+  attacks.js       the catalog: mutation anchors + authored Kane prompts
+  healer.js        M2: prompt building + lenient reply parsing (see below)
+  patch.js         patch application: allow-list only, module-load check,
+                   full rollback on any failure
+  cycle.js         the immune state machine (inject -> verify -> heal -> verify)
+  immune-log.js    append-only JSONL incident store (snapshot folding)
+orchestrator.js    baseline / drill / watch modes; manages the Patient process
+kane/              the authored Kane tests, one file per check, with commands
+tests/             stubbed-engine + API contract suites (no credits, no network)
+data/              immune-log.jsonl — every recorded cycle
+evidence/          per-incident Kane output (NDJSON + verdict) and Healer patches
+```
+
+### Two bugs this project found in itself
+
+The first hook-mode coupon cycle failed all three heal attempts, live.
+Dissecting the Healer's real replies found two parsing failure modes:
+(1) a literal newline inside the model's JSON summary string, and (2) the
+Patient's own email regex copied into the JSON with single backslashes
+(`\s`, `\.`) — invalid JSON escapes. `lib/healer.js` now repairs both,
+inside string literals only, and regression tests reproduce the exact
+payloads. The failed incidents are still in the log (`failed`, trigger
+`hook`) — they are part of the evidence, not an embarrassment to hide.
+
+## API notes (for the dashboard)
+
+- `GET /api/log` → `{ incidents, orders }`. Each incident carries:
+  `id`, `attack`, `attackName`, `surface`, `trigger`
+  (`manual` | `drill` | `hook`), `startedAt`, `endedAt`, `finalStatus`
+  (`passed` | `repelled` | `healed` | `failed` | `kane-error` | `error` |
+  `running`), `kaneRuns[]` (`phase`, `at`, `exitCode`, `status`, `passed`,
+  `credits`, `testUrl`, `evidence`), `healerAttempts[]` (`n`, `at`,
+  prompt/response summaries, `patchFiles`, `patchEvidence`, `error`), and
+  `events[]` — the status-transition timeline (`at`, `type`, `detail`)
+  the dashboard's immune trace plots.
+- `GET /api/summary` → aggregate vitals computed from the stored log:
+  `counts` by outcome (incl. `active` = currently running), the freshest
+  `lastKaneVerdict`, `lastIncidentAt`, `secondsSinceLastIncident`, and
+  `totalKaneCredits`. No live service calls.
+- `GET /evidence/<incident-id>/<file>` serves the recorded Kane output
+  and Healer patches.
+- Store API: `GET /api/products?q=&category=`, `GET /api/cart`,
+  `POST /api/cart/add|set|remove`, `POST /api/checkout`, `POST /api/login`,
+  `GET /api/orders`, `GET /api/vitals`.
+
+## License
+
+MIT. Sample data uses neutral, fictional names only; no real person's
+data, and no credentials of any kind, are in this repo.
