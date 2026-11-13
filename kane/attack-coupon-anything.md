@@ -1,8 +1,9 @@
 # Kane test — attack: coupon-anything
 
 Catalog: "Coupon field accepts arbitrary discount text" (checkout coupon).
-Healthy behavior: unknown coupon codes are rejected; only issued codes
-(e.g. LOOP10) discount. Fault behavior: any coupon text takes 50% off.
+Mutation: `patient/checkout.js` treats an unknown coupon as a 50% discount
+instead of rejecting it. Healthy behaviour: only issued codes (LOOP10)
+discount; anything else is a checkout error and no order is created.
 
 ## Command
 
@@ -10,12 +11,12 @@ Healthy behavior: unknown coupon codes are rejected; only issued codes
 export KANE_CLI_CHROME_PATH=/home/hatch/.cache/ms-playwright/chromium-1254/chrome-linux64/chrome
 export NO_PROXY=localhost,127.0.0.1
 export no_proxy=localhost,127.0.0.1
-kane-cli run --agent --headless --url http://localhost:3000 \
-  "Open the LoopMune store. Add the first product to the cart once. In the checkout form enter name 'Kane Check', email 'kane@example.com' and coupon 'FREESTUFF'. Submit the checkout. Verify the checkout is REJECTED with an error message and no order confirmation is shown, because FREESTUFF is not a valid coupon. If an order is placed or a discount is applied, the check fails."
+kane-cli run --agent --headless --url http://localhost:3100 \
+  "Open the LoopMune store. Click 'Add to cart' on the first product once. In the checkout form enter name 'Kane Check', email 'kane@example.com' and coupon 'FREESTUFF', then submit the checkout. The checkout must be REJECTED with an error and no order confirmation may appear, because FREESTUFF is not an issued coupon. If an order is confirmed or a discount is applied, the check fails."
 ```
 
 ## Expected
 
-- Healthy Patient (fault OFF): exit 0 — attack repelled.
-- Fault ON: exit 1 — infection confirmed; M2 restores coupon validation and
-  re-runs this exact test.
+- Healthy Patient (no mutation): exit 0 — attack repelled.
+- Mutation injected: exit 1 — infection confirmed; the healer agent must
+  restore coupon validation in `patient/checkout.js`; Kane re-verifies.
