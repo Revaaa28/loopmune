@@ -28,6 +28,7 @@ export function createCart() {
       const product = findProduct(id);
       if (!product) continue;
       items.push({ id, name: product.name, price: product.price, qty, lineTotal: product.price * qty });
+
     }
     const { total, count } = totals();
     return { items, total, count };
