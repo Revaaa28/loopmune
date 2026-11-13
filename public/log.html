@@ -3,8 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Immune Log — LoopMune</title>
+<title>Immune Log — LoopMune Patient Monitor</title>
 <link rel="stylesheet" href="/base.css">
+<link rel="stylesheet" href="/monitor.css">
 </head>
 <body class="lm-page lm-page-log">
 <header class="lm-header">
@@ -13,60 +14,101 @@
     <span class="lm-wordmark">LoopMune</span>
   </div>
   <nav class="lm-nav">
-    <a class="lm-nav-store" href="/">Back to the store</a>
+    <a class="lm-nav-store" href="/">Visit the store — the patient</a>
   </nav>
 </header>
 
-<main class="lm-main lm-main-log">
-  <h1 class="lm-log-heading">Immune Log</h1>
-  <p class="lm-log-intro">This page is the store's immune system at work. Something breaks the store, an automated checker proves whether the break is real, and an AI agent fixes the code. Every round is recorded below, exactly as it happened — this page reads stored records only, so it stays truthful even if a service behind the scenes is down.</p>
-
-  <section class="lm-now" aria-label="What is happening right now">
-    <h2 class="lm-now-heading">Right now</h2>
-    <p class="lm-now-state" id="now-state">Reading the latest records…</p>
-    <p class="lm-now-next" id="now-next"></p>
-    <p class="lm-now-action"><a class="lm-button lm-button-primary" href="/">Visit the store</a></p>
-  </section>
-
-  <section class="lm-actors" aria-label="Who does what">
-    <h2 class="lm-actors-heading">Who does what</h2>
-    <div class="lm-actor">
-      <h3 class="lm-actor-name">The Breaker</h3>
-      <p>Breaks the store on purpose — a safety check removed here, a wrong total there — the way a careless edit or an attacker would.</p>
-    </div>
-    <div class="lm-actor">
-      <h3 class="lm-actor-name">Kane CLI — the Checker</h3>
-      <p>Opens the store in a real browser and uses it like a customer: adds to the cart, checks out, signs in. Only Kane's verdict counts — if Kane says the store works, the break was not real.</p>
-    </div>
-    <div class="lm-actor">
-      <h3 class="lm-actor-name">The Healer</h3>
-      <p>An AI agent. It reads Kane's failure report, works out what is wrong in the code, rewrites it — then Kane checks again.</p>
-    </div>
-  </section>
-
-  <section class="lm-summary" aria-label="Immune system summary">
-    <div class="lm-chip">Healed: <strong class="lm-summary-healed">–</strong></div>
-    <div class="lm-chip">Active: <strong class="lm-summary-active">–</strong></div>
-    <div class="lm-chip">Failed: <strong class="lm-summary-failed">–</strong></div>
-    <div class="lm-chip">Repelled: <strong class="lm-summary-repelled">–</strong></div>
-    <div class="lm-chip">Last Kane verdict: <strong class="lm-summary-verdict">–</strong></div>
-    <div class="lm-chip">Last incident: <strong class="lm-summary-since">–</strong></div>
-    <div class="lm-chip">Updated: <strong class="lm-summary-updated">–</strong></div>
-  </section>
-
-  <div class="lm-filters" role="group" aria-label="Filter incidents by outcome">
-    <button class="lm-chip lm-chip-filter" type="button" data-filter="all" aria-pressed="true">All</button>
-    <button class="lm-chip lm-chip-filter" type="button" data-filter="healed" aria-pressed="false">Healed</button>
-    <button class="lm-chip lm-chip-filter" type="button" data-filter="running" aria-pressed="false">Active</button>
-    <button class="lm-chip lm-chip-filter" type="button" data-filter="failed" aria-pressed="false">Failed</button>
-    <button class="lm-chip lm-chip-filter" type="button" data-filter="repelled" aria-pressed="false">Repelled</button>
+<main class="lm-main-log lm-monitor">
+  <div class="lm-monitor-head">
+    <p class="lm-monitor-word"><b>LOOPMUNE</b> · PATIENT MONITOR</p>
+    <p class="lm-monitor-bed">THE PATIENT: THE LOOPMUNE STORE — A REAL WEB SHOP · <span id="monitor-since">CASES RECORDED IN THE LOG BELOW</span></p>
   </div>
 
-  <p class="lm-banner" id="log-error" role="alert" hidden></p>
-  <p class="lm-log-state" id="log-state" role="status">Loading incidents…</p>
-  <ol class="lm-incidents" id="incidents"></ol>
+  <p class="lm-state-word" id="state-word" data-state="waiting">READING…</p>
+  <p class="lm-state-sentence" id="now-state">Reading the latest records…</p>
+  <p class="lm-state-next" id="now-next"></p>
+
+  <section class="lm-tracebox" aria-label="Immune trace">
+    <div class="lm-trace-cap">
+      <span>Immune trace — drawn from the <span id="trace-count">recorded</span> cases below</span>
+      <span class="lm-trace-key">▲ red spike = the moment Kane confirmed a break</span>
+    </div>
+    <div id="trace-wrap" role="img" aria-label="A line that runs calm and green, with a red spike at each moment the checker confirmed a break, settling again when that case closed."></div>
+    <p class="lm-trace-foot">This trace is drawn from the real incident record: each spike sits at the exact time Kane confirmed a break, and settles when that case closed. It shows the rhythm of the recorded cases — it is not a sensor reading from the app.</p>
+  </section>
+
+  <section class="lm-vitals-grid" aria-label="The numbers so far">
+    <div class="lm-vital-cell"><div class="lm-vital-n" id="v-runs">–</div><div class="lm-vital-l">Checks run by Kane</div></div>
+    <div class="lm-vital-cell"><div class="lm-vital-n" id="v-credits">–</div><div class="lm-vital-l">Kane credits spent</div></div>
+    <div class="lm-vital-cell"><div class="lm-vital-n lm-n-red" id="v-breaks">–</div><div class="lm-vital-l">Breaks Kane confirmed</div></div>
+    <div class="lm-vital-cell"><div class="lm-vital-n lm-n-green" id="v-healed">–</div><div class="lm-vital-l">Healed by the agent</div></div>
+    <div class="lm-vital-cell"><div class="lm-vital-n" id="v-rate">–</div><div class="lm-vital-l">Heal rate</div></div>
+    <div class="lm-vital-cell"><div class="lm-vital-n" id="v-mtth">–</div><div class="lm-vital-l">Average time to heal</div></div>
+  </section>
+  <p class="lm-vitals-note">Counts come from the stored log itself — no live service is called to draw this page. <span id="v-updated"></span></p>
+
+  <section class="lm-break" aria-labelledby="break-h">
+    <h2 class="lm-break-heading" id="break-h">Try it yourself</h2>
+    <p class="lm-break-intro">Pick a break and inject it into the real shop on purpose. Kane will check the shop in a real browser; if the break is real, the Healer agent rewrites the code and Kane checks again. You watch the whole case appear below, live. One break at a time — it takes two to four minutes.</p>
+    <div class="lm-break-controls">
+      <label class="lm-break-label">Which break?
+        <select class="lm-input lm-break-select" id="break-select"></select>
+      </label>
+      <button class="lm-button lm-break-button" id="break-button" type="button">Break the shop on purpose — watch it heal</button>
+    </div>
+    <p class="lm-break-note" id="break-note"></p>
+    <p class="lm-break-status" id="break-status" role="status" aria-live="polite"></p>
+  </section>
+
+  <div class="lm-cols">
+    <section class="lm-cases" aria-labelledby="cases-h">
+      <h1 class="lm-cases-heading" id="cases-h">Immune Log</h1>
+      <p class="lm-cases-intro">Every recorded case, exactly as it happened — the break, what Kane found, what the Healer did, and how it ended. Failed heals are kept, unedited: they are part of the record, not an embarrassment to hide.</p>
+
+      <div class="lm-filters" role="group" aria-label="Filter cases by outcome">
+        <button class="lm-chip lm-chip-filter" type="button" data-filter="all" aria-pressed="true">All cases</button>
+        <button class="lm-chip lm-chip-filter" type="button" data-filter="healed" aria-pressed="false">Healed</button>
+        <button class="lm-chip lm-chip-filter" type="button" data-filter="failed" aria-pressed="false">Could not fix</button>
+        <button class="lm-chip lm-chip-filter" type="button" data-filter="running" aria-pressed="false">Happening now</button>
+        <button class="lm-chip lm-chip-filter" type="button" data-filter="repelled" aria-pressed="false">Repelled</button>
+        <button class="lm-chip lm-chip-filter" type="button" data-filter="passed" aria-pressed="false">All clear</button>
+      </div>
+
+      <p class="lm-banner" id="log-error" role="alert" hidden></p>
+      <p class="lm-log-state" id="log-state" role="status">Loading the recorded cases…</p>
+      <ol class="lm-incidents" id="incidents"></ol>
+    </section>
+
+    <aside class="lm-side">
+      <section class="lm-side-block" aria-labelledby="actors-h">
+        <h2 class="lm-side-heading" id="actors-h">Who does what</h2>
+        <div class="lm-actor-card">
+          <h3>The Breaker</h3>
+          <p>Breaks the store on purpose — a safety check removed here, a wrong total there — the way a careless edit or an attacker would.</p>
+        </div>
+        <div class="lm-actor-card">
+          <h3>Kane CLI — the Checker</h3>
+          <p>Opens the store in a real browser and uses it like a customer: adds to the cart, checks out, signs in. Only Kane's verdict counts — if Kane says the store works, the break was not real.</p>
+        </div>
+        <div class="lm-actor-card">
+          <h3>The Healer</h3>
+          <p>An AI agent. It reads Kane's failure report, works out what is wrong in the code, and rewrites it. It never grades its own work — Kane checks again.</p>
+        </div>
+      </section>
+
+      <section class="lm-side-block" aria-labelledby="watch-h">
+        <h2 class="lm-side-heading" id="watch-h">What this monitor watches for</h2>
+        <ul class="lm-watch" id="watch-list">
+          <li>Loading the watch list…</li>
+        </ul>
+        <p class="lm-watch-note">Each of these is a real fault the Breaker can inject into the shop's code. The outcome shown is the newest recorded case for that break.</p>
+      </section>
+    </aside>
+  </div>
+
+  <footer class="lm-monitor-foot">LOOPMUNE — A SELF-HEALING WEB APP · KANE CLI IS THE ONLY ACCEPTED PROOF THAT A BREAK IS REAL · THIS PAGE READS STORED RECORDS ONLY, SO IT STAYS TRUTHFUL EVEN IF A SERVICE BEHIND THE SCENES IS DOWN.</footer>
 </main>
 
-<script src="/log.js"></script>
+<script type="module" src="/log.js"></script>
 </body>
 </html>

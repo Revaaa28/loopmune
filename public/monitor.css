@@ -1,0 +1,141 @@
+/* LoopMune — Patient Monitor skin (design direction C).
+   The dashboard IS the bedside monitor for one patient: the app.
+   Phosphor-on-black, one trace, giant numerals, everything else whispers.
+   Layout primitives live in base.css; this file is the theme + the
+   monitor-only components. */
+
+.lm-page-log {
+  --bg: #04070a; --panel: #070d11; --panel-2: #0a1218; --line: #16242c; --line-soft: #0e1a20;
+  --ink: #cfe0da; --ink-2: #7e938c; --ink-3: #4c6059;
+  --trace: #3ddc97; --trace-glow: rgba(61, 220, 151, .35);
+  --red: #ff5347; --amber: #ffb224; --cyan: #57c7d4;
+  --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  background: var(--bg);
+  color: var(--ink);
+}
+.lm-page-log a { color: var(--cyan); }
+.lm-page-log a:focus-visible,
+.lm-page-log button:focus-visible,
+.lm-page-log select:focus-visible,
+.lm-page-log [tabindex]:focus-visible { outline: 2px solid var(--trace); outline-offset: 2px; }
+.lm-page-log .lm-header { border-bottom: 1px solid var(--line); }
+.lm-page-log .lm-wordmark { font-family: var(--mono); letter-spacing: .14em; }
+
+.lm-monitor { max-width: 1180px; margin: 0 auto; padding: 24px; }
+
+/* ── monitor head + the one big state word ─────────────── */
+.lm-monitor-head { display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap; }
+.lm-monitor-word { font-family: var(--mono); font-size: 15px; letter-spacing: .14em; color: var(--ink-2); margin: 0; }
+.lm-monitor-word b { color: var(--ink); }
+.lm-monitor-bed { font-family: var(--mono); font-size: 12px; color: var(--ink-3); margin: 0; }
+.lm-state-word {
+  font-family: var(--mono); font-weight: 700; line-height: 1.05;
+  font-size: clamp(34px, 6vw, 58px); letter-spacing: .02em; margin: 12px 0 0;
+}
+.lm-state-word[data-state="stable"] { color: var(--trace); text-shadow: 0 0 18px var(--trace-glow); }
+.lm-state-word[data-state="treating"] { color: var(--amber); }
+.lm-state-word[data-state="alarm"] { color: var(--red); }
+.lm-state-word[data-state="waiting"] { color: var(--ink-2); }
+.lm-state-sentence { font-size: 15px; margin: 8px 0 0; max-width: 75ch; }
+.lm-state-next { font-size: 13px; color: var(--ink-2); margin: 4px 0 0; max-width: 75ch; }
+
+/* ── the trace ─────────────────────────────────────────── */
+.lm-tracebox {
+  margin: 24px 0 8px; border: 1px solid var(--line); border-radius: 10px; padding: 12px 16px;
+  background:
+    repeating-linear-gradient(0deg, transparent, transparent 23px, rgba(61, 220, 151, .05) 24px),
+    repeating-linear-gradient(90deg, transparent, transparent 23px, rgba(61, 220, 151, .05) 24px),
+    var(--panel);
+}
+.lm-trace-cap { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; font-family: var(--mono); font-size: 11px; color: var(--ink-3); letter-spacing: .08em; text-transform: uppercase; margin-bottom: 8px; }
+.lm-trace-key { color: var(--red); }
+.lm-trace-svg { width: 100%; height: 110px; display: block; }
+.lm-trace-line { fill: none; stroke: var(--trace); stroke-width: 2.4; stroke-linejoin: round; stroke-linecap: round; filter: drop-shadow(0 0 5px var(--trace-glow)); }
+.lm-trace-spike { fill: none; stroke: var(--red); stroke-width: 2.4; stroke-linejoin: round; stroke-linecap: round; filter: drop-shadow(0 0 5px rgba(255, 83, 71, .4)); }
+@media (prefers-reduced-motion: no-preference) {
+  .lm-trace-line { stroke-dasharray: 1; animation: lm-draw 2.4s ease-out 1; }
+  @keyframes lm-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+}
+.lm-trace-foot { font-family: var(--mono); font-size: 11px; color: var(--ink-3); letter-spacing: .04em; margin: 8px 0 0; }
+
+/* ── giant vitals ──────────────────────────────────────── */
+.lm-vitals-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; margin: 16px 0 0; }
+.lm-vital-cell { background: var(--panel); padding: 16px 24px; }
+.lm-vital-n { font-family: var(--mono); font-size: 38px; font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums; }
+.lm-vital-n.lm-n-green { color: var(--trace); }
+.lm-vital-n.lm-n-red { color: var(--red); }
+.lm-vital-l { font-family: var(--mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-2); margin-top: 8px; }
+.lm-vitals-note { font-size: 12px; color: var(--ink-3); margin: 8px 0 24px; }
+
+/* ── break it yourself ─────────────────────────────────── */
+.lm-break { border: 1px solid var(--line); border-radius: 10px; background: var(--panel); padding: 24px; margin-bottom: 32px; }
+.lm-break-heading { font-family: var(--mono); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-2); margin: 0 0 12px; }
+.lm-break-intro { margin: 0 0 16px; max-width: 80ch; }
+.lm-break-controls { display: flex; flex-wrap: wrap; gap: 12px; align-items: end; }
+.lm-break-label { display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: var(--ink-2); }
+.lm-break-select { background: var(--panel-2); color: var(--ink); border: 1px solid var(--line); border-radius: 6px; min-height: 2.5rem; padding: 0.5rem; }
+.lm-break-button { background: var(--amber); color: #1a1200; border: none; border-radius: 6px; font-weight: 700; padding: 0.55rem 1.1rem; min-height: 2.5rem; cursor: pointer; }
+.lm-break-button[disabled] { opacity: .55; cursor: not-allowed; }
+.lm-break-note { color: var(--amber); font-size: 13px; margin: 12px 0 0; }
+.lm-break-note:empty { display: none; }
+.lm-break-status { font-size: 14px; margin: 8px 0 0; max-width: 80ch; }
+.lm-break-status:empty { display: none; }
+
+/* ── two-column body ───────────────────────────────────── */
+.lm-cols { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 32px; align-items: start; }
+@media (max-width: 920px) { .lm-cols { grid-template-columns: 1fr; } }
+
+/* ── cases ─────────────────────────────────────────────── */
+.lm-cases-heading { font-size: 26px; margin: 0 0 8px; }
+.lm-cases-intro { color: var(--ink-2); margin: 0 0 16px; max-width: 75ch; }
+.lm-page-log .lm-filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+.lm-page-log .lm-chip { border: 1px solid var(--line); border-radius: 999px; padding: 0.3rem 0.8rem; background: var(--panel-2); color: var(--ink); font: inherit; font-size: 13px; }
+.lm-page-log .lm-chip-filter { cursor: pointer; }
+.lm-page-log .lm-chip-filter[aria-pressed="true"] { outline: 2px solid var(--trace); }
+.lm-page-log .lm-banner { border: 1px solid var(--red); border-radius: 8px; padding: 0.6rem 0.9rem; margin: 1rem 0; color: var(--ink); }
+.lm-log-state { color: var(--ink-2); }
+.lm-log-state:empty { display: none; }
+
+.lm-case { border: 1px solid var(--line); border-radius: 10px; background: var(--panel); padding: 16px 20px; margin-bottom: 16px; }
+.lm-case-failed { border-left: 4px solid var(--red); }
+.lm-case-healed { border-left: 4px solid var(--trace); }
+.lm-case-running { border-left: 4px solid var(--amber); }
+.lm-case-head { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: baseline; cursor: pointer; }
+.lm-case-no { font-family: var(--mono); font-size: 11px; letter-spacing: .12em; color: var(--ink-3); }
+.lm-case-title { margin: 0; font-size: 17px; }
+.lm-case-meta { font-family: var(--mono); font-size: 12px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.lm-case-toggle { margin-left: auto; color: var(--ink-2); }
+.lm-outcome-word { font-family: var(--mono); font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.lm-outcome-healed, .lm-outcome-passed, .lm-outcome-repelled { color: var(--trace); }
+.lm-outcome-failed, .lm-outcome-error, .lm-outcome-kane-error { color: var(--red); }
+.lm-outcome-running { color: var(--amber); }
+.lm-case-sentence { margin: 8px 0 4px; }
+.lm-case-body { margin-top: 8px; }
+
+.lm-steps { list-style: none; margin: 8px 0 0; padding: 0; }
+.lm-step { display: flex; gap: 12px; padding: 8px 0; border-top: 1px dashed var(--line); }
+.lm-step:first-child { border-top: none; }
+.lm-step-glyph { font-family: var(--mono); font-weight: 700; width: 18px; flex: none; text-align: center; }
+.lm-glyph-bad { color: var(--red); }
+.lm-glyph-good { color: var(--trace); }
+.lm-glyph-mid { color: var(--ink-2); }
+.lm-step-main { font-size: 13px; overflow-wrap: anywhere; }
+.lm-step-meta { display: block; font-family: var(--mono); font-size: 11px; color: var(--ink-3); margin-top: 2px; }
+.lm-evidence-row { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 4px; }
+.lm-evidence { font-family: var(--mono); font-size: 12px; font-weight: 700; }
+.lm-failure-note { font-size: 13px; color: var(--ink-2); border-top: 1px solid var(--line); padding-top: 12px; margin: 12px 0 0; }
+
+/* ── side blocks ───────────────────────────────────────── */
+.lm-side-block { margin-bottom: 32px; }
+.lm-side-heading { font-family: var(--mono); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-2); margin: 0 0 12px; }
+.lm-actor-card { border: 1px solid var(--line); border-radius: 10px; background: var(--panel); padding: 16px; margin-bottom: 12px; }
+.lm-actor-card h3 { margin: 0 0 6px; font-size: 15px; }
+.lm-actor-card p { margin: 0; font-size: 13px; color: var(--ink-2); }
+.lm-watch { list-style: none; margin: 0; padding: 0; }
+.lm-watch-item { border: 1px solid var(--line); border-radius: 10px; background: var(--panel-2); padding: 12px 16px; margin-bottom: 12px; }
+.lm-watch-name { font-weight: 650; font-size: 14px; }
+.lm-watch-suspicion { font-size: 13px; color: var(--ink-2); margin-top: 2px; }
+.lm-watch-outcome { font-family: var(--mono); font-size: 11px; color: var(--ink-3); margin-top: 8px; }
+.lm-watch-note { font-size: 12px; color: var(--ink-3); }
+
+.lm-monitor-foot { margin-top: 48px; padding-top: 16px; border-top: 1px solid var(--line); font-family: var(--mono); font-size: 11px; color: var(--ink-3); letter-spacing: .05em; }
