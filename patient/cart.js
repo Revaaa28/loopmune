@@ -1,8 +1,8 @@
 // LoopMune Patient — cart aggregate.
 //
 // Owns the cart lines and the deterministic money math. All prices are
-// integer rupiah and totals are always computed here from price x quantity;
-// the client never supplies a total.
+// integer US cents (USD) and totals are always computed here from
+// price x quantity; the client never supplies a total.
 
 import { findProduct } from './catalog.js';
 import { httpError } from './errors.js';

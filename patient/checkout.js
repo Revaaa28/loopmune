@@ -7,9 +7,11 @@
 
 import { httpError } from './errors.js';
 
-// Issued coupon codes -> discount rate. Anything not listed here is invalid.
+// Issued coupon codes -> discount percent. Anything not listed here is
+// invalid. Percents are integers so discount math stays in exact integer
+// cents — no float ever touches money.
 const COUPONS = {
-  LOOP10: 0.1,
+  LOOP10: 10,
 };
 
 let orderSeq = 0;
@@ -33,7 +35,9 @@ export function placeOrder(cart, { name, email, coupon = '' } = {}) {
     if (rate === undefined) {
       throw httpError(400, 'invalid coupon code');
     }
-    discount = Math.round(total * rate);
+    // Exact integer-cents discount: total * percent / 100, rounded half
+    // up via integer arithmetic only (total and rate are both integers).
+    discount = Math.floor((total * rate + 50) / 100);
   }
 
   const order = {
