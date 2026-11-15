@@ -1,0 +1,69 @@
+{
+  "phase": "verify",
+  "at": "2026-11-15T06:31:47.907Z",
+  "exitCode": 3,
+  "status": "failed",
+  "passed": false,
+  "testUrl": "https://test-manager.lambdatest.com/projects/01M730R4QV2KQWHS1GAKND4KMY/test-cases/01M7EYBRAF3YQWKF07V8RH4AG1/dashboard/share/US_2P6KFD6J00E49MR3GOFZGI5FLWFHTMICTUPBPDBN8ZUL0KTWOPDIV2QTI7BFJJ6P?type=summary&agentView=true&fqdn=summary-page",
+  "credits": 3.73054,
+  "runEnd": {
+    "type": "run_end",
+    "status": "failed",
+    "summary": "The browser automation capture process did not finish its screenshot within 60 seconds. The store itself loaded successfully, but the run could not continue without the capture.\nRetry the run and investigate the browser or screenshot-capture environment if the timeout happens again.",
+    "one_liner": "The run stopped while the browser was trying to take a screenshot after opening the store, before it could add either item or check the cart total.",
+    "final_state": {},
+    "reason": "navigate_node: post-nav capture failed: TimeoutError: screenshot: Timeout 60000ms exceeded.\nCall log:\n  - taking page screenshot\n  - waiting for fonts to load...\n  - fonts loaded\n",
+    "duration": 75.4,
+    "bifurcated": false,
+    "total_runs": 1,
+    "context": {
+      "memory": {},
+      "variables": {},
+      "pointer": "(failed) The run stopped while the browser was trying to take a screenshot after opening the store, before it could add either item or check the cart total."
+    },
+    "credits_consumed": 3.73054,
+    "session_dir": "/home/hatch/.testmuai/kaneai/sessions/7942bddc-5343-44bc-8e27-c2cc9197e402",
+    "run_dir": "/home/hatch/.testmuai/kaneai/sessions/7942bddc-5343-44bc-8e27-c2cc9197e402/runs/0",
+    "result_code": 510,
+    "reason_code": "infra_error.screenshot_failed",
+    "per_flow_metadata": [
+      {
+        "result_code": "510",
+        "reason_code": "infra_error.screenshot_failed",
+        "error_message": "navigate_node: post-nav capture failed: TimeoutError: screenshot: Timeout 60000ms exceeded.\nCall log:\n  - taking page screenshot\n  - waiting for fonts to load...\n  - fonts loaded\n",
+        "summary": "The browser automation capture process did not finish its screenshot within 60 seconds. The store itself loaded successfully, but the run could not continue without the capture.\nRetry the run and investigate the browser or screenshot-capture environment if the timeout happens again.",
+        "one_liner": "The run stopped while the browser was trying to take a screenshot after opening the store, before it could add either item or check the cart total.",
+        "credits_consumed": 3.73054
+      }
+    ],
+    "run_id": "run-0",
+    "verdict": {
+      "confirmed": false,
+      "status": "broken",
+      "family": "environment_issue",
+      "category": "platform_failure",
+      "category_proposal": "",
+      "severity": "major",
+      "root_cause": "The browser automation capture process did not finish its screenshot within 60 seconds. The store itself loaded successfully, but the run could not continue without the capture.",
+      "agent_fault_assessment": "The agent did not click an incorrect product or misread the cart. It could not proceed past the required post-navigation capture, so it never had an opportunity to perform the requested two add-to-cart actions or evaluate the total.",
+      "bug_title": "Post-navigation screenshot capture timed out",
+      "signals": [],
+      "confidence": 0.83,
+      "suggestion": "Retry the run and investigate the browser or screenshot-capture environment if the timeout happens again.",
+      "one_liner": "The run stopped while the browser was trying to take a screenshot after opening the store, before it could add either item or check the cart total.",
+      "relevant_steps": [
+        0,
+        1
+      ],
+      "culprit_step": "0-1",
+      "credits_consumed": 1.0217,
+      "mode": "terminal"
+    },
+    "test_url": "https://test-manager.lambdatest.com/projects/01M730R4QV2KQWHS1GAKND4KMY/test-cases/01M7EYBRAF3YQWKF07V8RH4AG1/dashboard/share/US_2P6KFD6J00E49MR3GOFZGI5FLWFHTMICTUPBPDBN8ZUL0KTWOPDIV2QTI7BFJJ6P?type=summary&agentView=true&fqdn=summary-page",
+    "coverage": {
+      "status": "skipped"
+    },
+    "v": 1,
+    "ts": "2026-11-15T06:31:46.133Z"
+  }
+}

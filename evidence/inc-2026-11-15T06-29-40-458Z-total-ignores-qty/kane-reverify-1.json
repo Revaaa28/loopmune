@@ -1,0 +1,79 @@
+{
+  "phase": "reverify-1",
+  "at": "2026-11-15T06:33:07.100Z",
+  "exitCode": 0,
+  "status": "passed",
+  "passed": true,
+  "testUrl": "https://test-manager.lambdatest.com/projects/01M730R4QV2KQWHS1GAKND4KMY/test-cases/01M7EYF2AYYYH0CKCNNQTJE50Q/dashboard/share/US_Q8L6LC0SZ33ZLLH92B2UWI7UBTHV2JAEBAF9CG13FYHTFGPZNPQDGYGA7GJNECI9?type=summary&agentView=true&fqdn=summary-page",
+  "credits": 16.550354999999996,
+  "runEnd": {
+    "type": "run_end",
+    "status": "passed",
+    "summary": "Opened the LoopMune store.\nAdded the first product, Antibody Tee — Navy, to the cart twice.\nThe cart total was $49.98, confirming two items were added at $24.99 each.",
+    "one_liner": "added two Antibody Tee — Navy shirts to the cart on the LoopMune store",
+    "final_state": {
+      "url": "http://localhost:3100/",
+      "cart_total": "$49.98"
+    },
+    "reason": "Objective completed",
+    "duration": 51.3,
+    "bifurcated": false,
+    "total_runs": 1,
+    "context": {
+      "memory": {
+        "cart_total_check": {
+          "extracted_value": "$49.98",
+          "operator": "equals",
+          "transforms": [
+            "strip"
+          ],
+          "json_path": null,
+          "reasoning": "value: '$49.98' -> '$49.98' after ['strip']; equals '$49.98' -> PASS",
+          "analyzer_type": "textual_visual",
+          "step": 4,
+          "query": "the cart total amount in the cart summary",
+          "condition": "the cart total reads $49.98 — exactly twice the unit price",
+          "human_description": "Reading the cart total from the cart summary",
+          "expected_value": "$49.98",
+          "code_js": "(() => { const label = Array.from(el(60).querySelectorAll('*')).find(e => e.children.length === 0 && e.textContent.trim() === 'Total'); return label?.nextElementSibling?.textContent.trim() ?? null; })()",
+          "wrapped_js": "(els) => {\n  const __m = {60: 0};\n  const el = (i) => els[__m[i]];\n  const __v = ((() => { const label = Array.from(el(60).querySelectorAll('*')).find(e => e.children.length === 0 && e.textContent.trim() === 'Total'); return label?.nextElementSibling?.textContent.trim() ?? null; })());\n  return (typeof __v === 'boolean' ? String(__v) : __v);\n}",
+          "locators": [
+            "internal:role=region[name=\"Cart\"i]"
+          ],
+          "needs_unit_conversion": false
+        }
+      },
+      "variables": {
+        "cart_total_check": {
+          "syntax": "{{cart_total_check}}",
+          "value": "$49.98",
+          "type": "memory",
+          "secret": false
+        }
+      },
+      "pointer": "(passed) added two Antibody Tee — Navy shirts to the cart on the LoopMune store"
+    },
+    "credits_consumed": 16.550354999999996,
+    "session_dir": "/home/hatch/.testmuai/kaneai/sessions/07d7e97e-2b15-4e94-998f-7c8d169c4afd",
+    "run_dir": "/home/hatch/.testmuai/kaneai/sessions/07d7e97e-2b15-4e94-998f-7c8d169c4afd/runs/0",
+    "result_code": 100,
+    "reason_code": "success.complete",
+    "per_flow_metadata": [
+      {
+        "result_code": "100",
+        "reason_code": "success.complete",
+        "error_message": null,
+        "summary": "Opened the LoopMune store.\nAdded the first product, Antibody Tee — Navy, to the cart twice.\nThe cart total was $49.98, confirming two items were added at $24.99 each.",
+        "one_liner": "added two Antibody Tee — Navy shirts to the cart on the LoopMune store",
+        "credits_consumed": 16.550354999999996
+      }
+    ],
+    "run_id": "run-0",
+    "test_url": "https://test-manager.lambdatest.com/projects/01M730R4QV2KQWHS1GAKND4KMY/test-cases/01M7EYF2AYYYH0CKCNNQTJE50Q/dashboard/share/US_Q8L6LC0SZ33ZLLH92B2UWI7UBTHV2JAEBAF9CG13FYHTFGPZNPQDGYGA7GJNECI9?type=summary&agentView=true&fqdn=summary-page",
+    "coverage": {
+      "status": "skipped"
+    },
+    "v": 1,
+    "ts": "2026-11-15T06:33:04.821Z"
+  }
+}

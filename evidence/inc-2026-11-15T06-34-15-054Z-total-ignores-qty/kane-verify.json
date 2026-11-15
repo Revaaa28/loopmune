@@ -1,0 +1,75 @@
+{
+  "phase": "verify",
+  "at": "2026-11-15T06:35:40.356Z",
+  "exitCode": 1,
+  "status": "failed",
+  "passed": false,
+  "testUrl": "https://test-manager.lambdatest.com/projects/01M730R4QV2KQWHS1GAKND4KMY/test-cases/01M7EYKYRQGGHV5WVMK20YAA60/dashboard/share/US_1ORCZBQL51Y9BT2OU10IPZV7GPPBG2W2OQ10A3R6LE27CMBRBTA6I7T4RL5PER0P?type=summary&agentView=true&fqdn=summary-page",
+  "credits": 10.3988575,
+  "runEnd": {
+    "type": "run_end",
+    "status": "failed",
+    "summary": "After the second add-to-cart action, the item count increased to two, but the displayed total was not recalculated for the second item.\nFix the cart total calculation so it multiplies each product's price by its quantity and refreshes the displayed total after every add-to-cart action.\nevidence: objective_contradiction: After two additions, cart quantity is 2 but the Total still reads $24.99, not $49.98.",
+    "one_liner": "The cart shows two Antibody Tee — Navy items but charges only for one.",
+    "final_state": {},
+    "reason": "After two additions, cart quantity is 2 but the Total still reads $24.99, not $49.98.",
+    "duration": 46.7,
+    "bifurcated": false,
+    "total_runs": 1,
+    "context": {
+      "memory": {},
+      "variables": {},
+      "pointer": "(failed) The cart shows two Antibody Tee — Navy items but charges only for one."
+    },
+    "credits_consumed": 10.3988575,
+    "session_dir": "/home/hatch/.testmuai/kaneai/sessions/9568b72a-cad1-478e-8a2d-39d89fb619f5",
+    "run_dir": "/home/hatch/.testmuai/kaneai/sessions/9568b72a-cad1-478e-8a2d-39d89fb619f5/runs/0",
+    "result_code": 740,
+    "reason_code": "assertion_error.confirmed_product_bug",
+    "per_flow_metadata": [
+      {
+        "result_code": "740",
+        "reason_code": "assertion_error.confirmed_product_bug",
+        "error_message": "After two additions, cart quantity is 2 but the Total still reads $24.99, not $49.98.",
+        "summary": "After the second add-to-cart action, the item count increased to two, but the displayed total was not recalculated for the second item.\nFix the cart total calculation so it multiplies each product's price by its quantity and refreshes the displayed total after every add-to-cart action.\nevidence: objective_contradiction: After two additions, cart quantity is 2 but the Total still reads $24.99, not $49.98.",
+        "one_liner": "The cart shows two Antibody Tee — Navy items but charges only for one.",
+        "credits_consumed": 10.3988575
+      }
+    ],
+    "run_id": "run-0",
+    "verdict": {
+      "confirmed": true,
+      "status": "failed",
+      "family": "application_issue",
+      "category": "ui_data_defect",
+      "category_proposal": "",
+      "severity": "major",
+      "root_cause": "After the second add-to-cart action, the item count increased to two, but the displayed total was not recalculated for the second item.",
+      "agent_fault_assessment": "The agent followed the requested flow: it clicked Add to cart for Antibody Tee — Navy twice, and both actions completed with successful POST /api/cart/add responses. The incorrect result occurred after the valid second addition, so the agent's actions did not cause the failure.",
+      "bug_title": "Cart total ignores added item quantity",
+      "signals": [
+        {
+          "step": "0-4",
+          "kind": "objective_contradiction",
+          "excerpt": "After two additions, cart quantity is 2 but the Total still reads $24.99, not $49.98."
+        }
+      ],
+      "confidence": 0.98,
+      "suggestion": "Fix the cart total calculation so it multiplies each product's price by its quantity and refreshes the displayed total after every add-to-cart action.",
+      "one_liner": "The cart shows two Antibody Tee — Navy items but charges only for one.",
+      "relevant_steps": [
+        3,
+        4
+      ],
+      "culprit_step": "0-4",
+      "credits_consumed": 2.9955,
+      "mode": "terminal"
+    },
+    "test_url": "https://test-manager.lambdatest.com/projects/01M730R4QV2KQWHS1GAKND4KMY/test-cases/01M7EYKYRQGGHV5WVMK20YAA60/dashboard/share/US_1ORCZBQL51Y9BT2OU10IPZV7GPPBG2W2OQ10A3R6LE27CMBRBTA6I7T4RL5PER0P?type=summary&agentView=true&fqdn=summary-page",
+    "coverage": {
+      "status": "skipped"
+    },
+    "v": 1,
+    "ts": "2026-11-15T06:35:39.215Z"
+  }
+}
